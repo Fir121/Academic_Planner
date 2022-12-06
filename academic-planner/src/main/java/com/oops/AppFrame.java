@@ -72,22 +72,125 @@ class LoginPanel extends LogoPanel{
     }
 }
 
-class LoginFormPanel extends AppFrame{
+class LoginFormPanel extends AppFrame implements ActionListener{
     JPanel loginFormPanel;
+    JPasswordField passwordField;
     public LoginFormPanel(){
         loginFormPanel = new JPanel();
         mainFrame.setContentPane(loginFormPanel);
 
+        GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{151, 1, 151, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 28, 28, 28, 28, 28, 0, 0, 0, 0};
+		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		loginFormPanel.setLayout(gbl_contentPane);
+		
+		JLabel lblNewLabel_1 = new JLabel("Password");
+		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+		gbc_lblNewLabel_1.anchor = GridBagConstraints.SOUTH;
+		gbc_lblNewLabel_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_1.gridx = 1;
+		gbc_lblNewLabel_1.gridy = 4;
+		loginFormPanel.add(lblNewLabel_1, gbc_lblNewLabel_1);
+		
+		passwordField = new JPasswordField();
+		passwordField.setColumns(10);
+		GridBagConstraints gbc_passwordField = new GridBagConstraints();
+		gbc_passwordField.anchor = GridBagConstraints.NORTH;
+		gbc_passwordField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_passwordField.insets = new Insets(0, 0, 5, 5);
+		gbc_passwordField.gridx = 1;
+		gbc_passwordField.gridy = 5;
+		loginFormPanel.add(passwordField, gbc_passwordField);
+		
+		JButton btnNewButton = new JButton("Enter");
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
+		gbc_btnNewButton.gridx = 1;
+		gbc_btnNewButton.gridy = 7;
+		loginFormPanel.add(btnNewButton, gbc_btnNewButton);
+
+        btnNewButton.addActionListener(this);
+
         refresh();
     }
+
+    public void actionPerformed(ActionEvent e){
+        System.out.println(passwordField.getPassword());
+        // TODO FN CALL AND HANDLE HERE
+    }
 }
-class RegisterFormPanel extends AppFrame{
+class RegisterFormPanel extends AppFrame implements ActionListener{
     JPanel registerFormPanel;
+    JTextField emailField;
+    JPasswordField passwordField;
     public RegisterFormPanel(){
         registerFormPanel = new JPanel();
         mainFrame.setContentPane(registerFormPanel);
 
+        GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{151, 1, 151, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 28, 28, 28, 28, 28, 0, 0, 0, 0};
+		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		registerFormPanel.setLayout(gbl_contentPane);
+		
+		JLabel lblNewLabel = new JLabel("Email");
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
+		gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel.gridx = 1;
+		gbc_lblNewLabel.gridy = 3;
+		registerFormPanel.add(lblNewLabel, gbc_lblNewLabel);
+		
+        emailField = new JTextField();
+		GridBagConstraints gbc_textField = new GridBagConstraints();
+		gbc_textField.anchor = GridBagConstraints.NORTH;
+		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField.insets = new Insets(0, 0, 5, 5);
+		gbc_textField.gridx = 1;
+		gbc_textField.gridy = 4;
+		registerFormPanel.add(emailField, gbc_textField);
+		emailField.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Password");
+		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+		gbc_lblNewLabel_1.anchor = GridBagConstraints.SOUTH;
+		gbc_lblNewLabel_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_1.gridx = 1;
+		gbc_lblNewLabel_1.gridy = 5;
+		registerFormPanel.add(lblNewLabel_1, gbc_lblNewLabel_1);
+		
+		passwordField = new JPasswordField();
+		passwordField.setColumns(10);
+		GridBagConstraints gbc_passwordField = new GridBagConstraints();
+		gbc_passwordField.anchor = GridBagConstraints.NORTH;
+		gbc_passwordField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_passwordField.insets = new Insets(0, 0, 5, 5);
+		gbc_passwordField.gridx = 1;
+		gbc_passwordField.gridy = 6;
+		registerFormPanel.add(passwordField, gbc_passwordField);
+		
+		JButton btnNewButton = new JButton("Register");
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
+		gbc_btnNewButton.gridx = 1;
+		gbc_btnNewButton.gridy = 7;
+		registerFormPanel.add(btnNewButton, gbc_btnNewButton);
+
+        btnNewButton.addActionListener(this);
+
         refresh();
+    }
+
+    public void actionPerformed(ActionEvent e){
+        System.out.println(emailField.getText());
+        System.out.println(passwordField.getPassword());
+        // TODO FN CALL AND HANDLE HERE
     }
 }
 
