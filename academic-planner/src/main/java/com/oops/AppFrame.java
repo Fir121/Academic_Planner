@@ -29,7 +29,7 @@ abstract class LogoPanel extends AppFrame{
 		logoPanel.setLayout(gbl_contentPane);
 
         JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\moham\\Downloads\\Screenshot 2022-12-06 212157a.png"));
+		lblNewLabel.setIcon(new ImageIcon(getClass().getResource("/images/Screenshot 2022-12-06 212157a.png")));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
@@ -41,7 +41,7 @@ abstract class LogoPanel extends AppFrame{
 }
 class RegisterPanel extends LogoPanel{
     public RegisterPanel(){
-        JButton button = new JButton("Register");
+        JButton button = new JButton("Register Now");
 		button.setFont(new Font("Tahoma", Font.PLAIN, 15));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -86,6 +86,19 @@ class LoginFormPanel extends AppFrame implements ActionListener{
 		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
 		loginFormPanel.setLayout(gbl_contentPane);
 		
+        JButton backButton = new JButton("Back");
+		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
+		gbc_btnNewButton_1.anchor = GridBagConstraints.WEST;
+		gbc_btnNewButton_1.insets = new Insets(0, 20, 5, 5);
+		gbc_btnNewButton_1.gridx = 0;
+		gbc_btnNewButton_1.gridy = 0;
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new LoginPanel();
+            }
+        });
+		loginFormPanel.add(backButton, gbc_btnNewButton_1);
+        
 		JLabel lblNewLabel_1 = new JLabel("Password");
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.anchor = GridBagConstraints.SOUTH;
@@ -137,6 +150,19 @@ class RegisterFormPanel extends AppFrame implements ActionListener{
 		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
 		registerFormPanel.setLayout(gbl_contentPane);
 		
+        JButton backButton = new JButton("Back");
+		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
+		gbc_btnNewButton_1.anchor = GridBagConstraints.WEST;
+		gbc_btnNewButton_1.insets = new Insets(0, 20, 5, 5);
+		gbc_btnNewButton_1.gridx = 0;
+		gbc_btnNewButton_1.gridy = 0;
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new RegisterPanel();
+            }
+        });
+		registerFormPanel.add(backButton, gbc_btnNewButton_1);
+
 		JLabel lblNewLabel = new JLabel("Email");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.SOUTH;
