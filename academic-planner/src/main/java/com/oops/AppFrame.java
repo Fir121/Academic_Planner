@@ -1,6 +1,9 @@
 package com.oops;
 
 import javax.swing.*;
+
+import com.toedter.calendar.JDateChooser;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -271,14 +274,12 @@ class HomePanel extends AppFrame{
 
 class CoursePanel extends AppFrame{
 	JPanel coursePanel;
-	JButton addCourse;
 
-	ArrayList<String> courses;
 	public CoursePanel(){
 		coursePanel = new JPanel();
         mainFrame.setContentPane(coursePanel);
 
-		courses = Courses.getCourses();
+		ArrayList<String> courses = Courses.getCourses();
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{59, 0};
@@ -301,9 +302,52 @@ class CoursePanel extends AppFrame{
 			JLabel lblNewLabel = new JLabel(course);
 			panel.add(lblNewLabel);
 
-			JButton btnNewButton_2 = new JButton("Remove");
+			JButton btnNewButton_1 = new JButton("Set Weekly");
+			btnNewButton_1.putClientProperty( "course", course);
+			btnNewButton_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
+					boolean[] weekly = Courses.getWeekly(course);
+					JRadioButton j1 = new JRadioButton("Monday");
+					j1.setSelected(weekly[0]);
+					JRadioButton j2 = new JRadioButton("Tuesday");
+					j2.setSelected(weekly[1]);
+					JRadioButton j3 = new JRadioButton("Wednesday");
+					j3.setSelected(weekly[2]);
+					JRadioButton j4 = new JRadioButton("Thursday");
+					j4.setSelected(weekly[3]);
+					JRadioButton j5 = new JRadioButton("Friday");
+					j5.setSelected(weekly[4]);
+					Object[] message = {
+						j1,j2,j3,j4,j5
+					};
+					int option = JOptionPane.showConfirmDialog(null, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
+					if (option == JOptionPane.OK_OPTION) {
+						if (Courses.setWeekly(course, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
+							new CoursePanel();
+						}
+						else{
+							// failed
+						}
+					} else {
+						// none
+					}
+				}
+			});
+			panel.add(btnNewButton_1);
+
+			JButton btnNewButton_2 = new JButton("Set Components");
 			btnNewButton_2.putClientProperty( "course", course);
 			btnNewButton_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					new CourseComponentPanel((String)((JButton)e.getSource()).getClientProperty( "course" ));
+				}
+			});
+			panel.add(btnNewButton_2);
+
+			JButton btnNewButton_3 = new JButton("Remove");
+			btnNewButton_3.putClientProperty( "course", course);
+			btnNewButton_3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (Courses.removeCourse((String)((JButton)e.getSource()).getClientProperty( "course" ))){
 						new CoursePanel();
@@ -313,10 +357,45 @@ class CoursePanel extends AppFrame{
 					}
 				}
 			});
-			panel.add(btnNewButton_2);
+			panel.add(btnNewButton_3);
+
+			JButton btnNewButton_4 = new JButton("Edit");
+			btnNewButton_4.putClientProperty( "course", course);
+			btnNewButton_4.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
+					ArrayList<Object> courseDetails = Courses.getCourse(course);
+					JTextField courseName = new JTextField();
+					courseName.setText((String)courseDetails.get(0));
+					JTextField courseId = new JTextField();
+					courseId.setText((String)courseDetails.get(1));
+					JSpinner courseCredits = new JSpinner();
+					courseCredits.setValue((Integer)courseDetails.get(2));
+					Object[] message = {
+						"Course Name:", courseName,
+						"Course ID:", courseId,
+						"Course Credits:",courseCredits
+					};
+
+					int option = JOptionPane.showConfirmDialog(null, message, "Edit Course", JOptionPane.OK_CANCEL_OPTION);
+					if (option == JOptionPane.OK_OPTION) {
+						if (Courses.setCourse(course, courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
+							new CoursePanel();
+						}
+						else{
+							// failed
+						}
+					} else {
+						// none
+					}
+				}
+			});
+			panel.add(btnNewButton_4);
 		}
 
-		addCourse = new JButton("Add Course");
+		
+
+		JButton addCourse = new JButton("Add Course");
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = 0;
 		gbc_btnNewButton.gridy = 1;
@@ -331,7 +410,7 @@ class CoursePanel extends AppFrame{
 					"Course Credits:",courseCredits
 				};
 
-				int option = JOptionPane.showConfirmDialog(null, message, "Login", JOptionPane.OK_CANCEL_OPTION);
+				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
 					if (Courses.addCourse(courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
 						new CoursePanel();
@@ -345,6 +424,138 @@ class CoursePanel extends AppFrame{
 			}
 		});
 		coursePanel.add(addCourse, gbc_btnNewButton);
+		refresh();
+	}
+}
+
+class CourseComponentPanel extends AppFrame{
+	JPanel courseComponentPanel;
+
+	public CourseComponentPanel(String course){
+		courseComponentPanel = new JPanel();
+        mainFrame.setContentPane(courseComponentPanel);
+
+		ArrayList<String> components = Courses.getComponents(course);
+
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{59, 0};
+		gbl_contentPane.rowHeights = new int[]{48, 107, 0};
+		gbl_contentPane.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		courseComponentPanel.setLayout(gbl_contentPane);
+
+		/* name of course should be heading
+		JLabel lbl = new JLabel(course);
+		courseComponentPanel.add(lbl);
+		 */
+
+		Box verticalBox = Box.createVerticalBox();
+		GridBagConstraints gbc_verticalBox = new GridBagConstraints();
+		gbc_verticalBox.gridx = 0;
+		gbc_verticalBox.gridy = 0;
+		courseComponentPanel.add(verticalBox, gbc_verticalBox);
+
+		for (String component:components){
+			JPanel panel = new JPanel();
+			panel.setBorder(null);
+			verticalBox.add(panel);
+			
+			JLabel lblNewLabel = new JLabel(component);
+			panel.add(lblNewLabel);
+
+			JButton btnNewButton_3 = new JButton("Remove");
+			btnNewButton_3.putClientProperty( "course", course);
+			btnNewButton_3.putClientProperty( "component", component);
+			btnNewButton_3.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (Courses.removeComponent((String)((JButton)e.getSource()).getClientProperty( "course" ), (String)((JButton)e.getSource()).getClientProperty( "component" ))){
+						new CourseComponentPanel((String)((JButton)e.getSource()).getClientProperty( "course" ));
+					}
+					else{
+						//failed
+					}
+				}
+			});
+			panel.add(btnNewButton_3);
+
+			JButton btnNewButton_4 = new JButton("Edit");
+			btnNewButton_4.putClientProperty( "course", course);
+			btnNewButton_4.putClientProperty( "component", component);
+			btnNewButton_4.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
+					String component = (String)((JButton)e.getSource()).getClientProperty( "component" );
+
+					ArrayList<Object> componentDetails = Courses.getComponent(course,component);
+
+					JTextField componentName = new JTextField();
+					componentName.setText((String)componentDetails.get(0));
+
+					JDateChooser  componentDate = new JDateChooser();
+					componentDate.setDate((Date)componentDetails.get(1));
+
+					JTextField componentPercentage = new JTextField();
+					componentPercentage.setText(String.valueOf(componentDetails.get(2)));
+
+					Object[] message = {
+						"Component Name:", componentName,
+						"Component Date:", componentDate,
+						"Component Percentage:",componentPercentage
+					};
+
+					int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
+					if (option == JOptionPane.OK_OPTION) {
+						if (Courses.editComponent(course, component, componentName.getText(), componentDate.getDate(), Double.valueOf(componentPercentage.getText()))){
+							new CourseComponentPanel(course);
+						}
+						else{
+							// failed
+						}
+					} else {
+						// none
+					}
+				}
+			});
+			panel.add(btnNewButton_4);
+		}
+
+		
+
+		JButton addComponent = new JButton("Add Component");
+		addComponent.putClientProperty( "course", course);
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.gridx = 0;
+		gbc_btnNewButton.gridy = 1;
+		addComponent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
+
+				JTextField componentName = new JTextField();
+
+				JDateChooser  componentDate = new JDateChooser();
+
+
+				JTextField componentPercentage = new JTextField();
+				Object[] message = {
+					"Component Name:", componentName,
+					"Component Date:", componentDate,
+					"Component Percentage:",componentPercentage
+				};
+
+				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
+				if (option == JOptionPane.OK_OPTION) {
+					if (Courses.addComponent(course, componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
+						new CourseComponentPanel(course);
+					}
+					else{
+						// failed
+					}
+				} else {
+					// none
+				}
+			}
+		});
+		courseComponentPanel.add(addComponent, gbc_btnNewButton);
 		refresh();
 	}
 }
