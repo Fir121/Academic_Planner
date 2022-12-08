@@ -11,7 +11,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
     int cur_year;
     int cur_month;
     JLabel timeHeader;
-    
+
     ArrayList<JPanel> panels = new ArrayList<>();
 
     public CalendarDatesPanel(){
@@ -45,7 +45,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         timeHeader = new JLabel(LocalDate.of(cur_year, cur_month, 1).getMonth()+", "+cur_year);
 		GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
 		gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_8.gridx = 4;
+		gbc_lblNewLabel_8.gridx = 3;
 		gbc_lblNewLabel_8.gridy = 0;
 		add(timeHeader, gbc_lblNewLabel_8);
 
@@ -181,7 +181,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         LocalDate _today = LocalDate.of(year, month, 1);
         DayOfWeek _dayOfWeek = _today.getDayOfWeek();
 
-        Calendar calendar = new GregorianCalendar(year, month, 1);
         int dayOfWeek=0;
         switch((int)_dayOfWeek.getValue()){
             case 1:dayOfWeek=2;break;
@@ -192,7 +191,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
             case 6:dayOfWeek=7;break;
             case 7:dayOfWeek=1;break;
         }
-        int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int daysInMonth =  _today.lengthOfMonth();;
         
         //print initial spaces
         int i_count = 0;
@@ -224,6 +223,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
 		setLayout(gbl_contentPane);
     }
     public void actionPerformed(ActionEvent e){
+        remove(timeHeader);
         for (JPanel panel: panels){
             remove(panel);
         }

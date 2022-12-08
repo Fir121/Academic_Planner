@@ -574,18 +574,30 @@ class CalendarPanel extends AppFrame{
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0,1,0};
-		gbl_contentPane.rowHeights = new int[]{4, 1};
+		gbl_contentPane.rowHeights = new int[]{0,4, 1,0};
 		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
 		calendarPanel.setLayout(gbl_contentPane);
 
 		// put cal panel on top
 		GridBagConstraints gbc_pos = new GridBagConstraints();
 		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pos.gridx = 1;
-		gbc_pos.gridy = 0;
+		gbc_pos.gridy = 1;
 		calendarPanel.add(new CalendarDatesPanel(), gbc_pos);
+
 		// put buttons below
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		JButton but = new JButton();
+		but.setText("Add Event");
+		panel.add(but);
+
+		GridBagConstraints gbc_pos_2 = new GridBagConstraints();
+		gbc_pos_2.fill = GridBagConstraints.HORIZONTAL;
+		gbc_pos_2.gridx = 1;
+		gbc_pos_2.gridy = 2;
+		calendarPanel.add(panel, gbc_pos_2);
 
 		refresh();
 	}
