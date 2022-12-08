@@ -258,7 +258,12 @@ class HomePanel extends AppFrame{
 
 		JPanel panel1 = new JPanel();
 		verticalBox.add(panel1);
-        JButton button1 = new JButton("Opt 2");
+        JButton button1 = new JButton("Calendar");
+		button1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new CalendarPanel();
+			}
+		});
 		button1.setFont(new Font("Tahoma", Font.PLAIN, 15));
         panel1.add(button1);
 
@@ -556,6 +561,32 @@ class CourseComponentPanel extends AppFrame{
 			}
 		});
 		courseComponentPanel.add(addComponent, gbc_btnNewButton);
+		refresh();
+	}
+}
+
+class CalendarPanel extends AppFrame{
+	JPanel calendarPanel;
+
+	public CalendarPanel(){
+		calendarPanel = new JPanel();
+        mainFrame.setContentPane(calendarPanel);
+
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{0,1,0};
+		gbl_contentPane.rowHeights = new int[]{4, 1};
+		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		calendarPanel.setLayout(gbl_contentPane);
+
+		// put cal panel on top
+		GridBagConstraints gbc_pos = new GridBagConstraints();
+		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
+		gbc_pos.gridx = 1;
+		gbc_pos.gridy = 0;
+		calendarPanel.add(new CalendarDatesPanel(), gbc_pos);
+		// put buttons below
+
 		refresh();
 	}
 }
