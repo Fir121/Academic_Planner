@@ -591,6 +591,32 @@ class CalendarPanel extends AppFrame{
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		JButton but = new JButton();
 		but.setText("Add Event");
+		but.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JTextField eventName = new JTextField();
+				JTextField  eventCategory = new JTextField();
+				JDateChooser eventDate = new JDateChooser();
+				JRadioButton remind = new JRadioButton("Reminder?");
+				Object[] message = {
+					"Event Name:", eventName,
+					"Event Category:", eventCategory,
+					"Event Date:",eventDate, 
+					remind
+				};
+
+				int option = JOptionPane.showConfirmDialog(null, message, "Add Event", JOptionPane.OK_CANCEL_OPTION);
+				if (option == JOptionPane.OK_OPTION) {
+					if (CalendarEvents.addEvent(eventName.getText(), eventCategory.getText(), eventDate.getDate(), remind.isSelected())){
+						new CalendarPanel();
+					}
+					else{
+						// failed
+					}
+				} else {
+					// none
+				}
+			}
+		});
 		panel.add(but);
 
 		GridBagConstraints gbc_pos_2 = new GridBagConstraints();

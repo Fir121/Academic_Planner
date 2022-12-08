@@ -1,7 +1,8 @@
 package com.oops;
 
 import javax.swing.*;
-
+import javax.swing.border.LineBorder;
+import com.toedter.calendar.JDateChooser;
 import java.awt.*;
 import java.util.*;
 import java.time.*;
@@ -40,30 +41,95 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         renderDate();
     }
     private void renderDate(int cur_year, int cur_month){
+        HashMap<String,ArrayList<ArrayList<String>>> events = CalendarEvents.getEvents(cur_year, cur_month);
         String[][] dateArray = get2DCalendarArray(cur_year, cur_month);
 
-        timeHeader = new JLabel(LocalDate.of(cur_year, cur_month, 1).getMonth()+", "+cur_year);
+        timeHeader = new JLabel(LocalDate.of(cur_year, cur_month, 1).getMonth()+" "+cur_year);
 		GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
 		gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_8.gridx = 3;
 		gbc_lblNewLabel_8.gridy = 0;
 		add(timeHeader, gbc_lblNewLabel_8);
 
+        int day = 0;
+
         for (int i=0;i<dateArray.length;i++){
             for (int j=0;j<dateArray[i].length;j++){
                 if (dateArray[i][j] == null){
                     continue;
                 }
+                day++;
                 JPanel panel = new JPanel();
+                panel.setBorder(new LineBorder(new Color(0, 0, 0)));
                 GridBagConstraints gbc_panel = new GridBagConstraints();
                 gbc_panel.insets = new Insets(0, 0, 5, 5);
                 gbc_panel.fill = GridBagConstraints.BOTH;
                 gbc_panel.gridx = j;
                 gbc_panel.gridy = 2+i;
                 add(panel, gbc_panel);
-                
+
+                GridBagLayout gbl_contentPane = new GridBagLayout();
+                gbl_contentPane.columnWidths = new int[]{0};
+                gbl_contentPane.rowHeights = new int[]{0, 0};
+                gbl_contentPane.columnWeights = new double[]{1.0};
+                gbl_contentPane.rowWeights = new double[]{1.0, 1.0};
+                panel.setLayout(gbl_contentPane);
+
                 JLabel lbl = new JLabel(dateArray[i][j]);
-                panel.add(lbl);
+                lbl.setHorizontalAlignment(SwingConstants.CENTER);
+                GridBagConstraints gbc_panel_lbl = new GridBagConstraints();
+                gbc_panel_lbl.insets = new Insets(0, 0, 5, 0);
+                gbc_panel_lbl.gridx = 0;
+                gbc_panel_lbl.gridy = 0;
+                panel.add(lbl, gbc_panel_lbl);
+                Box verticalBox = Box.createVerticalBox();
+                GridBagConstraints gbc_panel_vbx = new GridBagConstraints();
+                gbc_panel_vbx.gridx = 0;
+                gbc_panel_vbx.gridy = 1;
+                panel.add(verticalBox, gbc_panel_vbx);
+                
+
+                if (events.containsKey(cur_year+"/"+cur_month+"/"+day)){
+                    for (ArrayList<String> ex: events.get(cur_year+"/"+cur_month+"/"+day)){
+                        JButton event_x = new JButton();
+                        event_x.setText(ex.get(1));
+                        event_x.putClientProperty("eventid", Integer.parseInt(ex.get(0)));
+                        // category ex.get(2);
+                        event_x.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                int eventId = (Integer)((JButton)e.getSource()).getClientProperty( "eventid" );
+                                ArrayList<Object> eventDetails = CalendarEvents.getEvent(eventId);
+                                JTextField eventName = new JTextField();
+                                eventName.setText((String)eventDetails.get(0));
+                                JTextField  eventCategory = new JTextField();
+                                eventCategory.setText((String)eventDetails.get(1));
+                                JDateChooser eventDate = new JDateChooser();
+                                eventDate.setDate((Date)eventDetails.get(2));
+                                JRadioButton remind = new JRadioButton("Reminder?");
+                                remind.setSelected((boolean)eventDetails.get(3));
+                                Object[] message = {
+                                    "Event Name:", eventName,
+                                    "Event Category:", eventCategory,
+                                    "Event Date:",eventDate, 
+                                    remind
+                                };
+                
+                                int option = JOptionPane.showConfirmDialog(null, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
+                                if (option == JOptionPane.OK_OPTION) {
+                                    if (CalendarEvents.addEvent(eventName.getText(), eventCategory.getText(), eventDate.getDate(), remind.isSelected())){
+                                        new CalendarPanel();
+                                    }
+                                    else{
+                                        // failed
+                                    }
+                                } else {
+                                    // none
+                                }
+                            }
+                        });
+                        verticalBox.add(event_x);
+                    }
+                }
 
                 panels.add(panel);
             }
