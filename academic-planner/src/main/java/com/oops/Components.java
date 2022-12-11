@@ -19,22 +19,22 @@ class Component implements Comparable<Component>{
 }
 
 public class Components {
-    int courseId;
+    int courseCode;
     ArrayList<Component> components;
-    public Components(int courseId){
-        this.courseId = courseId;
-        components = getComponents(courseId);
+    public Components(int courseCode){
+        this.courseCode = courseCode;
+        components = getComponents(courseCode);
     }
-    private ArrayList<Component> getComponents(int courseId){
+    private ArrayList<Component> getComponents(int courseCode){
         ArrayList<Component> al = new ArrayList<>();
         al.add(new Component(0, "T1", new Date("2022/12/4"), 25.0));
         al.add(new Component(1, "T1", new Date("2022/12/4"), 25.0));
         return al;
     }
-    public boolean removeComponent(int id){
+    public static boolean removeComponent(int id){
         return true;
     }
-    public boolean addComponent(String componentName, Date componentDate, Double componentPercentage){
+    public static boolean addComponent(String componentName, Date componentDate, Double componentPercentage){
         return true;
     }
     public Component getComponent(int id){

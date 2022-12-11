@@ -4,17 +4,17 @@ import java.util.*;
 
 class Course implements Comparable<Course>{
     int id;
-    String courseId;
+    String courseCode;
     String courseName;
     int courseCredits;
-    public Course(int id, String courseId, String courseName, int courseCredits){
+    public Course(int id, String courseCode, String courseName, int courseCredits){
         this.id = id;
-        this.courseId = courseId;
+        this.courseCode = courseCode;
         this.courseName = courseName;
         this.courseCredits = courseCredits;
     }
     public String toString(){
-        return courseId+" "+courseName;
+        return courseCode+" "+courseName;
     }
     public int compareTo(Course c){
         return id-c.id;
@@ -41,19 +41,19 @@ public class Courses {
         }
         return null;
     }
-    public boolean removeCourse(int id){
+    public static boolean removeCourse(int id){
         return true;
     }
-    public boolean addCourse(String courseName, String courseId, Integer courseCredits){
+    public static boolean addCourse(String courseName, String courseCode, Integer courseCredits){
         return true;
     }
-    public boolean setCourse(int id, String courseName, String courseId, Integer courseCredits){
+    public static boolean setCourse(int id, String courseName, String courseCode, Integer courseCredits){
         return true;
     }
     public boolean[] getWeekly(int id){
         return new boolean[]{true,true,true,true,false,false};
     }
-    public boolean setWeekly(int id, boolean[] weekly){
+    public static boolean setWeekly(int id, boolean[] weekly){
         return true;
     }
 

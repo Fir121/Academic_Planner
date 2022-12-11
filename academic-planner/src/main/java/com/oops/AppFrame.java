@@ -274,8 +274,13 @@ class HomePanel extends AppFrame{
 
 		JPanel panel2 = new JPanel();
 		verticalBox.add(panel2);
-        JButton button2 = new JButton("Opt 3");
+        JButton button2 = new JButton("Attendance");
 		button2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		button2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new AttendancePanel();
+			}
+		});
         panel2.add(button2);
 
         refresh();
@@ -334,7 +339,7 @@ class CoursePanel extends AppFrame{
 					};
 					int option = JOptionPane.showConfirmDialog(null, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
-						if (courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
+						if (Courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
 							new CoursePanel();
 						}
 						else{
@@ -358,7 +363,7 @@ class CoursePanel extends AppFrame{
 			btnNewButton_3.putClientProperty( "id", course.id);
 			btnNewButton_3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (courses.removeCourse((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
+					if (Courses.removeCourse((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
 						new CoursePanel();
 					}
 					else{
@@ -376,19 +381,19 @@ class CoursePanel extends AppFrame{
 					Course courseDetails = courses.getCourse(id);
 					JTextField courseName = new JTextField();
 					courseName.setText(courseDetails.courseName);
-					JTextField courseId = new JTextField();
-					courseId.setText(courseDetails.courseId);
+					JTextField courseCode = new JTextField();
+					courseCode.setText(courseDetails.courseCode);
 					JSpinner courseCredits = new JSpinner();
 					courseCredits.setValue(courseDetails.courseCredits);
 					Object[] message = {
 						"Course Name:", courseName,
-						"Course ID:", courseId,
+						"Course ID:", courseCode,
 						"Course Credits:",courseCredits
 					};
 
 					int option = JOptionPane.showConfirmDialog(null, message, "Edit Course", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
-						if (courses.setCourse(id, courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
+						if (Courses.setCourse(id, courseName.getText(), courseCode.getText(), (Integer)courseCredits.getValue())){
 							new CoursePanel();
 						}
 						else{
@@ -409,17 +414,17 @@ class CoursePanel extends AppFrame{
 		addCourse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField courseName = new JTextField();
-				JTextField courseId = new JTextField();
+				JTextField courseCode = new JTextField();
 				JSpinner courseCredits = new JSpinner();
 				Object[] message = {
 					"Course Name:", courseName,
-					"Course ID:", courseId,
+					"Course ID:", courseCode,
 					"Course Credits:",courseCredits
 				};
 
 				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
-					if (courses.addCourse(courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
+					if (Courses.addCourse(courseName.getText(), courseCode.getText(), (Integer)courseCredits.getValue())){
 						new CoursePanel();
 					}
 					else{
@@ -437,11 +442,11 @@ class CourseComponentPanel extends AppFrame{
 	JPanel courseComponentPanel;
 	Components components;
 
-	public CourseComponentPanel(int courseId){
+	public CourseComponentPanel(int courseCode){
 		courseComponentPanel = new JPanel();
         mainFrame.setContentPane(courseComponentPanel);
 
-		components =new Components(courseId);
+		components =new Components(courseCode);
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{59, 0};
@@ -473,8 +478,8 @@ class CourseComponentPanel extends AppFrame{
 			btnNewButton_3.putClientProperty( "componentid", component.id);
 			btnNewButton_3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (components.removeComponent((Integer)((JButton)e.getSource()).getClientProperty( "componentid" ))){
-						new CourseComponentPanel(components.courseId);
+					if (Components.removeComponent((Integer)((JButton)e.getSource()).getClientProperty( "componentid" ))){
+						new CourseComponentPanel(components.courseCode);
 					}
 					else{
 						//failed
@@ -511,7 +516,7 @@ class CourseComponentPanel extends AppFrame{
 						try{
 							Double percentage = Double.valueOf(componentPercentage.getText());
 							if (components.editComponent(componentId, componentName.getText(), componentDate.getDate(), percentage)){
-								new CourseComponentPanel(components.courseId);
+								new CourseComponentPanel(components.courseCode);
 							}
 							else{
 								// failed
@@ -548,8 +553,8 @@ class CourseComponentPanel extends AppFrame{
 
 				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
-					if (components.addComponent(componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
-						new CourseComponentPanel(components.courseId);
+					if (Components.addComponent(componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
+						new CourseComponentPanel(components.courseCode);
 					}
 					else{
 						// failed
@@ -581,7 +586,7 @@ class CalendarPanel extends AppFrame{
 		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pos.gridx = 1;
 		gbc_pos.gridy = 1;
-		calendarPanel.add(new CalendarDatesPanel(), gbc_pos);
+		calendarPanel.add(new CalendarDatesPanel(false,null), gbc_pos);
 
 		// put buttons below
 		JPanel panel = new JPanel();
@@ -619,6 +624,105 @@ class CalendarPanel extends AppFrame{
 		gbc_pos_2.gridx = 1;
 		gbc_pos_2.gridy = 2;
 		calendarPanel.add(panel, gbc_pos_2);
+
+		refresh();
+	}
+}
+
+class AttendancePanel extends AppFrame{
+	JPanel attendancePanel;
+	Attendances attendances;
+
+	public AttendancePanel(){
+		attendancePanel = new JPanel();
+        mainFrame.setContentPane(attendancePanel);
+
+		attendances = new Attendances();
+
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{59, 0};
+		gbl_contentPane.rowHeights = new int[]{48, 107, 0};
+		gbl_contentPane.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		attendancePanel.setLayout(gbl_contentPane);
+
+		Box verticalBox = Box.createVerticalBox();
+		GridBagConstraints gbc_verticalBox = new GridBagConstraints();
+		gbc_verticalBox.gridx = 0;
+		gbc_verticalBox.gridy = 0;
+		attendancePanel.add(verticalBox, gbc_verticalBox);
+
+		for (Attendance attendance:attendances.attendances){
+			JPanel panel = new JPanel();
+			panel.setBorder(null);
+			verticalBox.add(panel);
+			
+			JLabel lblNewLabel = new JLabel(attendance.course);
+			panel.add(lblNewLabel);
+
+			if (!attendance.hasWeekly){
+				JButton btnNewButton_1 = new JButton("Set Weekly");
+				btnNewButton_1.putClientProperty( "id", attendance.courseid);
+				btnNewButton_1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Integer id = (Integer)((JButton)e.getSource()).getClientProperty( "id" );
+						JRadioButton j1 = new JRadioButton("Monday");
+						JRadioButton j2 = new JRadioButton("Tuesday");
+						JRadioButton j3 = new JRadioButton("Wednesday");
+						JRadioButton j4 = new JRadioButton("Thursday");
+						JRadioButton j5 = new JRadioButton("Friday");
+						Object[] message = {
+							j1,j2,j3,j4,j5
+						};
+						int option = JOptionPane.showConfirmDialog(null, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
+						if (option == JOptionPane.OK_OPTION) {
+							if (Courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
+								new AttendancePanel();
+							}
+							else{
+								// failed
+							}
+						}
+					}
+				});
+				panel.add(btnNewButton_1);
+			}
+			else{
+				JButton btnNewButton_2 = new JButton("Mark Absences");
+				btnNewButton_2.putClientProperty( "id", attendance.courseid);
+				btnNewButton_2.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						new MarkAttendancePanel((Integer)((JButton)e.getSource()).getClientProperty( "id" ));
+					}
+				});
+				panel.add(btnNewButton_2);
+			}
+		}
+
+		refresh();
+	}
+}
+
+class MarkAttendancePanel extends AppFrame{
+	JPanel markAttendancePanel;
+
+	public MarkAttendancePanel(int courseid){
+		markAttendancePanel = new JPanel();
+        mainFrame.setContentPane(markAttendancePanel);
+
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{0,1,0};
+		gbl_contentPane.rowHeights = new int[]{0,5,0};
+		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
+		markAttendancePanel.setLayout(gbl_contentPane);
+
+		// put cal panel on top
+		GridBagConstraints gbc_pos = new GridBagConstraints();
+		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
+		gbc_pos.gridx = 1;
+		gbc_pos.gridy = 1;
+		markAttendancePanel.add(new CalendarDatesPanel(true,courseid), gbc_pos);
 
 		refresh();
 	}
