@@ -38,7 +38,7 @@ public class Attendances {
             return null;
         }
         ArrayList<Date> al = new ArrayList<>();
-        al.add(new Date("2022/12/12"));
+        al.add( DateAlternate.date("2022/12/12"));
         return new Attendance(1, "CS F15 CP", new boolean[]{true,true,true,true,false}, al);
     }
     

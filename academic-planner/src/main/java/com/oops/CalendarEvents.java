@@ -31,8 +31,8 @@ public class CalendarEvents {
     private ArrayList<Event> getEvents(int year, int month){
         // get events from sql and store in ARRAYLIST with event objects
         ArrayList<Event> events = new ArrayList<>();
-        events.add(new Event(1,"Event 1", "Holiday",new Date(year+"/"+month+"/1"), false));
-        events.add(new Event(2,"Event 2", "Component",new Date(year+"/"+month+"/2"), false));
+        events.add(new Event(1,"Event 1", "Holiday", DateAlternate.date(year+"/"+month+"/1"), false));
+        events.add(new Event(2,"Event 2", "Component", DateAlternate.date(year+"/"+month+"/2"), false));
         return events;
     }
     
@@ -51,7 +51,7 @@ public class CalendarEvents {
     }
 
     public boolean containsDate(String date){
-        Date dt = new Date(date);
+        Date dt =  DateAlternate.date(date);
         for (Event event: events){
             if (event.date.equals(dt)){
                 return true;
@@ -62,7 +62,7 @@ public class CalendarEvents {
     
     public ArrayList<Event> getEventsOnDate(String date){
         ArrayList<Event> al = new ArrayList<>();
-        Date dt = new Date(date);
+        Date dt =  DateAlternate.date(date);
         for (Event event: events){
             if (event.date.equals(dt)){
                 al.add(event);

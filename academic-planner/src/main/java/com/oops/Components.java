@@ -27,8 +27,8 @@ public class Components {
     }
     private ArrayList<Component> getComponents(int courseCode){
         ArrayList<Component> al = new ArrayList<>();
-        al.add(new Component(0, "T1", new Date("2022/12/4"), 25.0));
-        al.add(new Component(1, "T1", new Date("2022/12/4"), 25.0));
+        al.add(new Component(0, "T1", DateAlternate.date("2022/12/4"), 25.0));
+        al.add(new Component(1, "T1", DateAlternate.date("2022/12/4"), 25.0));
         return al;
     }
     public static boolean removeComponent(int id){
@@ -38,7 +38,7 @@ public class Components {
         return true;
     }
     public Component getComponent(int id){
-        return new Component(0, "T1", new Date("2022/12/4"), 25.0);
+        return new Component(0, "T1", DateAlternate.date("2022/12/4"), 25.0);
     }
     public boolean editComponent(int id, String componentName, Date componentDate, Double componentPercentage){
         return true;

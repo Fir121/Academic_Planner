@@ -94,7 +94,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 gbc_panel_vbx.gridy = 1;
                 panel.add(verticalBox, gbc_panel_vbx);
                 
-                if(attendance && Attendances.compareDateToWeekArray(new Date(cur_year+"/"+cur_month+"/"+day), attendanceob.weekly)){
+                if(attendance && Attendances.compareDateToWeekArray(DateAlternate.date(cur_year+"/"+cur_month+"/"+day), attendanceob.weekly)){
                     boolean flag = false;
                     for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                         if (ex.category.equals("Holiday")){
@@ -103,13 +103,13 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                     }
                     if (!flag){
                         JRadioButton absence = new JRadioButton("Present");
-                        if (!attendanceob.absences.contains(new Date(cur_year+"/"+cur_month+"/"+day))){
+                        if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
                             absence.setSelected(true);
                         }
                         absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
                         absence.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
-                                if (Attendances.toggleAttendance(courseid,new Date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
+                                if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
                                     new MarkAttendancePanel(courseid);
                                 }
                                 else{
