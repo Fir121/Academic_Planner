@@ -341,8 +341,6 @@ class CoursePanel extends AppFrame{
 						else{
 							// failed
 						}
-					} else {
-						// none
 					}
 				}
 			});
@@ -397,8 +395,6 @@ class CoursePanel extends AppFrame{
 						else{
 							// failed
 						}
-					} else {
-						// none
 					}
 				}
 			});
@@ -430,8 +426,6 @@ class CoursePanel extends AppFrame{
 					else{
 						// failed
 					}
-				} else {
-					// none
 				}
 			}
 		});
@@ -515,14 +509,18 @@ class CourseComponentPanel extends AppFrame{
 
 					int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
-						if (components.editComponent(componentId, componentName.getText(), componentDate.getDate(), Double.valueOf(componentPercentage.getText()))){
-							new CourseComponentPanel(components.courseId);
+						try{
+							Double percentage = Double.valueOf(componentPercentage.getText());
+							if (components.editComponent(componentId, componentName.getText(), componentDate.getDate(), percentage)){
+								new CourseComponentPanel(components.courseId);
+							}
+							else{
+								// failed
+							}
 						}
-						else{
+						catch(NumberFormatException Exc){
 							// failed
 						}
-					} else {
-						// none
 					}
 				}
 			});
@@ -557,8 +555,6 @@ class CourseComponentPanel extends AppFrame{
 					else{
 						// failed
 					}
-				} else {
-					// none
 				}
 			}
 		});
@@ -614,8 +610,6 @@ class CalendarPanel extends AppFrame{
 					else{
 						// failed
 					}
-				} else {
-					// none
 				}
 			}
 		});

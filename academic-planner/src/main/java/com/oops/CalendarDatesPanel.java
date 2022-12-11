@@ -123,8 +123,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                     else{
                                         // failed
                                     }
-                                } else {
-                                    // none
                                 }
                             }
                         });
