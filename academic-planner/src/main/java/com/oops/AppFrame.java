@@ -6,7 +6,6 @@ import com.toedter.calendar.JDateChooser;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 public class AppFrame{
     static JFrame mainFrame;
@@ -139,7 +138,7 @@ class LoginFormPanel extends AppFrame implements ActionListener{
 			new HomePanel();
 		}
         else{
-			// TODO HANDLE
+			PopupFrame.showErrorMessage();
 		}
     }
 }
@@ -226,7 +225,7 @@ class RegisterFormPanel extends AppFrame implements ActionListener{
 			new HomePanel();
 		}
 		else{
-			// TODO HANDLE
+			PopupFrame.showErrorMessage();
 		}
     }
 }
