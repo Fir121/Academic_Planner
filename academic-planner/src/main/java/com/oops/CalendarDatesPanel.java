@@ -6,6 +6,7 @@ import com.toedter.calendar.JDateChooser;
 import java.awt.*;
 import java.util.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.awt.event.*;
 
 public class CalendarDatesPanel extends JPanel implements ActionListener{
@@ -42,7 +43,17 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         }
         cur_year = dt.getYear();
         cur_month = dt.getMonthValue();
-        renderDate();
+
+        String date = "1/"+cur_month+"/"+cur_year;
+        LocalDate convertedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yyyy"));
+        convertedDate = convertedDate.withDayOfMonth(convertedDate.getMonth().length(convertedDate.isLeapYear()));
+
+        if(DateAlternate.date(cur_year+"/"+cur_month+"/"+convertedDate.getDayOfMonth()).compareTo(Constants.START) > 0 && DateAlternate.date(cur_year+"/"+cur_month+"/01").compareTo(Constants.END) < 0){
+            renderDate();
+            return;
+        }
+        PopupFrame.showErrorMessage();
+        renderDate(-1*difference);
     }
     private void renderDate(int cur_year, int cur_month){
         events = new CalendarEvents(cur_year, cur_month);
@@ -120,7 +131,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                         verticalBox.add(absence);
                     }
                 }
-                else{
+                else if (!attendance){
                     if (events.containsDate(cur_year+"/"+cur_month+"/"+day)){
                         for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                             JButton event_x = new JButton();
