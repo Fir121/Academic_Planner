@@ -1,7 +1,7 @@
 package com.oops;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
+import java.time.*;
 import java.util.*;
 
 public class DateAlternate {
@@ -14,5 +14,10 @@ public class DateAlternate {
             return null;
         }
         return date;
+    }
+
+    public static int getYear(Date d){
+        LocalDate date = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return date.getYear();
     }
 }

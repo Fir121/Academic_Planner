@@ -7,6 +7,7 @@ import java.awt.*;
 import java.util.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.awt.event.*;
 
 public class CalendarDatesPanel extends JPanel implements ActionListener{
@@ -20,12 +21,24 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
     ArrayList<JPanel> panels = new ArrayList<>();
 
     public CalendarDatesPanel(boolean attendance, Integer courseid){
+        this(attendance, courseid, null, null);
+    }
+    public CalendarDatesPanel(boolean attendance, Integer courseid, Integer cur_year, Integer cur_month){
         this.attendance = attendance;
         this.courseid = courseid;
         LocalDate today = LocalDate.now();
-        cur_year = today.getYear();
-        cur_month = today.getMonthValue();
-
+        if (cur_year == null){
+            this.cur_year = today.getYear();
+        }
+        else{
+            this.cur_year = cur_year;
+        }
+        if (cur_month == null){
+            this.cur_month = today.getMonthValue();
+        }
+        else{
+            this.cur_month = cur_month;
+        }
         setLayoutStyle();
         addCalendarHeader();
         renderDate();
@@ -44,15 +57,13 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         cur_year = dt.getYear();
         cur_month = dt.getMonthValue();
 
-        String date = "1/"+cur_month+"/"+cur_year;
-        LocalDate convertedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("M/d/yyyy"));
-        convertedDate = convertedDate.withDayOfMonth(convertedDate.getMonth().length(convertedDate.isLeapYear()));
+        LocalDate convertedDate = LocalDate.parse(cur_year+"/"+cur_month+"/01", DateTimeFormatter.ofPattern("yyyy/M/dd")).with(TemporalAdjusters.lastDayOfMonth());
 
         if(DateAlternate.date(cur_year+"/"+cur_month+"/"+convertedDate.getDayOfMonth()).compareTo(Constants.START) > 0 && DateAlternate.date(cur_year+"/"+cur_month+"/01").compareTo(Constants.END) < 0){
             renderDate();
             return;
         }
-        PopupFrame.showErrorMessage();
+        PopupFrame.showErrorMessage("This is beyond the semester's range");
         renderDate(-1*difference);
     }
     private void renderDate(int cur_year, int cur_month){
@@ -118,10 +129,12 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                             absence.setSelected(true);
                         }
                         absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
+                        final int cyear = cur_year;
+                        final int cmonth = cur_month;
                         absence.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
                                 if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
-                                    new MarkAttendancePanel(courseid);
+                                    new MarkAttendancePanel(courseid, cyear, cmonth);
                                 }
                                 else{
                                     // TODO ERROR

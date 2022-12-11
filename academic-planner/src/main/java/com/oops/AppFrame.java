@@ -6,13 +6,14 @@ import com.toedter.calendar.JDateChooser;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDate;
 
 public class AppFrame{
     static JFrame mainFrame;
     static{
         mainFrame = new JFrame("Academic Planner");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setBounds(0, 0, 1000, 750);
+        mainFrame.setBounds(100, 100, 1000, 750);
     }
     public void refresh(){
         mainFrame.setVisible(true);
@@ -770,6 +771,9 @@ class MarkAttendancePanel extends AppFrame{
 	JPanel markAttendancePanel;
 
 	public MarkAttendancePanel(int courseid){
+		this(courseid, null,null);
+	}
+	public MarkAttendancePanel(int courseid, Integer cur_year, Integer cur_month){
 		markAttendancePanel = new JPanel();
         mainFrame.setContentPane(markAttendancePanel);
 
@@ -802,7 +806,7 @@ class MarkAttendancePanel extends AppFrame{
 		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pos.gridx = 1;
 		gbc_pos.gridy = 1;
-		markAttendancePanel.add(new CalendarDatesPanel(true,courseid), gbc_pos);
+		markAttendancePanel.add(new CalendarDatesPanel(true,courseid,cur_year,cur_month), gbc_pos);
 
 		refresh();
 	}
