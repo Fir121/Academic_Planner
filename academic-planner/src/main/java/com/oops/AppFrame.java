@@ -6,7 +6,6 @@ import com.toedter.calendar.JDateChooser;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.time.LocalDate;
 
 public class AppFrame{
     static JFrame mainFrame;
