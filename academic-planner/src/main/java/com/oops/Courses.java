@@ -2,47 +2,59 @@ package com.oops;
 
 import java.util.*;
 
+class Course implements Comparable<Course>{
+    int id;
+    String courseId;
+    String courseName;
+    int courseCredits;
+    public Course(int id, String courseId, String courseName, int courseCredits){
+        this.id = id;
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.courseCredits = courseCredits;
+    }
+    public String toString(){
+        return courseId+" "+courseName;
+    }
+    public int compareTo(Course c){
+        return id-c.id;
+    }
+}
 public class Courses {
-    public static ArrayList<String> getCourses(){
-        ArrayList<String> al = new ArrayList<>();
-        al.add("CS F111 Comp Prog");
-        al.add("CHEM F111 Chem");
+    ArrayList<Course> courses;
+    public Courses(){
+        courses = getCourses();
+        Collections.sort(courses);
+    }
+    private ArrayList<Course> getCourses(){
+        // get from sql
+        ArrayList<Course> al = new ArrayList<>();
+        al.add(new Course(0, "CS F111", "C P", 4));
+        al.add(new Course(1, "CS F112", "C L", 3));
         return al;
     }
-    public static ArrayList<Object> getCourse(String course){
-        return new ArrayList<Object>(Arrays.asList(new Object[]{"Comp prog","CS F111",3}));
+    public Course getCourse(int id){
+        for (Course course: courses){
+            if (course.id == id){
+                return course;
+            }
+        }
+        return null;
     }
-    public static boolean removeCourse(String course){
+    public boolean removeCourse(int id){
         return true;
     }
-    public static boolean addCourse(String courseName, String courseId, Integer courseCredits){
+    public boolean addCourse(String courseName, String courseId, Integer courseCredits){
         return true;
     }
-    public static boolean setCourse(String course, String courseName, String courseId, Integer courseCredits){
+    public boolean setCourse(int id, String courseName, String courseId, Integer courseCredits){
         return true;
     }
-    public static boolean[] getWeekly(String course){
+    public boolean[] getWeekly(int id){
         return new boolean[]{true,true,true,true,false,false};
     }
-    public static boolean setWeekly(String course, boolean[] weekly){
+    public boolean setWeekly(int id, boolean[] weekly){
         return true;
     }
-    public static ArrayList<String> getComponents(String course){
-        ArrayList<String> al = new ArrayList<>();
-        al.add("Date | Component Name %age");
-        al.add("Date | Component Name %age");
-        return al;
-    }
-    public static boolean removeComponent(String course, String component){
-        return true;
-    }
-    public static boolean addComponent(String course, String courseName, Date courseId, Double courseCredits){
-        return true;
-    }
-    public static ArrayList<Object> getComponent(String course, String component){
-        return new ArrayList<Object>(Arrays.asList(new Object[]{"Component Name",new Date(),20}));
-    }
-    public static boolean editComponent(String course, String component, String componentName, Date componentDate, Double componentPercentage){
-        return true;
-    }
+
 }

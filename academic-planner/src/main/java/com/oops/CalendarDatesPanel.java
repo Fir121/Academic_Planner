@@ -12,6 +12,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
     int cur_year;
     int cur_month;
     JLabel timeHeader;
+    CalendarEvents events;
 
     ArrayList<JPanel> panels = new ArrayList<>();
 
@@ -41,7 +42,8 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         renderDate();
     }
     private void renderDate(int cur_year, int cur_month){
-        HashMap<String,ArrayList<ArrayList<String>>> events = CalendarEvents.getEvents(cur_year, cur_month);
+        events = new CalendarEvents(cur_year, cur_month);
+
         String[][] dateArray = get2DCalendarArray(cur_year, cur_month);
 
         timeHeader = new JLabel(LocalDate.of(cur_year, cur_month, 1).getMonth()+" "+cur_year);
@@ -89,24 +91,23 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 panel.add(verticalBox, gbc_panel_vbx);
                 
 
-                if (events.containsKey(cur_year+"/"+cur_month+"/"+day)){
-                    for (ArrayList<String> ex: events.get(cur_year+"/"+cur_month+"/"+day)){
+                if (events.containsDate(cur_year+"/"+cur_month+"/"+day)){
+                    for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                         JButton event_x = new JButton();
-                        event_x.setText(ex.get(1));
-                        event_x.putClientProperty("eventid", Integer.parseInt(ex.get(0)));
-                        // category ex.get(2);
+                        event_x.setText(ex.eventName);
+                        event_x.putClientProperty("eventid", ex.id);
                         event_x.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
                                 int eventId = (Integer)((JButton)e.getSource()).getClientProperty( "eventid" );
-                                ArrayList<Object> eventDetails = CalendarEvents.getEvent(eventId);
+                                Event eventDetails = events.getEvent(eventId);
                                 JTextField eventName = new JTextField();
-                                eventName.setText((String)eventDetails.get(0));
-                                JTextField  eventCategory = new JTextField();
-                                eventCategory.setText((String)eventDetails.get(1));
+                                eventName.setText(eventDetails.eventName);
+                                JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
+                                eventCategory.setSelectedItem(eventDetails.category);
                                 JDateChooser eventDate = new JDateChooser();
-                                eventDate.setDate((Date)eventDetails.get(2));
+                                eventDate.setDate(eventDetails.date);
                                 JRadioButton remind = new JRadioButton("Reminder?");
-                                remind.setSelected((boolean)eventDetails.get(3));
+                                remind.setSelected(eventDetails.reminder);
                                 Object[] message = {
                                     "Event Name:", eventName,
                                     "Event Category:", eventCategory,
@@ -116,7 +117,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 
                                 int option = JOptionPane.showConfirmDialog(null, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
                                 if (option == JOptionPane.OK_OPTION) {
-                                    if (CalendarEvents.addEvent(eventName.getText(), eventCategory.getText(), eventDate.getDate(), remind.isSelected())){
+                                    if (CalendarEvents.addEvent(eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
                                         new CalendarPanel();
                                     }
                                     else{

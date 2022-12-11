@@ -2,29 +2,72 @@ package com.oops;
 
 import java.util.*;
 
+class Event{
+    int id;
+    String eventName;
+    String category;
+    Date date;
+    boolean reminder;
+    public Event(int id, String eventName, String category, Date date, boolean reminder){
+        this.id = id;
+        this.eventName = eventName;
+        this.date = date;
+        this.reminder = reminder;
+        for (int i=0; i<Constants.CATEGORIES.length; i++){
+            if (Constants.CATEGORIES[i].equalsIgnoreCase(category)){
+                this.category = Constants.CATEGORIES[i];
+                return;
+            }
+        }
+        this.category = Constants.CATEGORIES[0];
+    }
+}
+
 public class CalendarEvents {
-    public static HashMap<String,ArrayList<ArrayList<String>>> getEvents(int year, int month){
-        HashMap<String,ArrayList<ArrayList<String>>> events = new HashMap<>();
-        ArrayList<ArrayList<String>> al = new ArrayList<>();
-        ArrayList<String> ax = new ArrayList<>(Arrays.asList(new String[]{"0","Event 1", "Category1"}));
-        al.add(ax);
-        al.add(ax);
-        events.put(year+"/"+month+"/1", al);
-        ArrayList<ArrayList<String>> al_1 = new ArrayList<>();
-        ArrayList<String> ax_1 = new ArrayList<>(Arrays.asList(new String[]{"1","Event 2", "Category2"}));
-        al_1.add(ax_1);
-        events.put(year+"/"+month+"/10", al_1);
+    ArrayList<Event> events;
+    public CalendarEvents(int year, int month){
+        events = getEvents(year,month);
+    }
+    private ArrayList<Event> getEvents(int year, int month){
+        // get events from sql and store in ARRAYLIST with event objects
+        ArrayList<Event> events = new ArrayList<>();
+        events.add(new Event(1,"Event 1", "Holiday",new Date(year+"/"+month+"/1"), false));
+        events.add(new Event(2,"Event 2", "Component",new Date(year+"/"+month+"/2"), false));
         return events;
     }
-    public static ArrayList<Object> getEvent(int id){
-        ArrayList<Object> al = new ArrayList<>();
-        al.add("Event 1");
-        al.add("Category1");
-        al.add(new Date());
-        al.add(true);
-        return al;
-    }
+    
     public static boolean addEvent(String name, String category, Date date, boolean remind){
+        // add event to db
         return true;
+    }
+
+    public Event getEvent(int id){
+        for (Event event: events){
+            if (event.id == id){
+                return event;
+            }
+        }
+        return null;
+    }
+
+    public boolean containsDate(String date){
+        Date dt = new Date(date);
+        for (Event event: events){
+            if (event.date.equals(dt)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public ArrayList<Event> getEventsOnDate(String date){
+        ArrayList<Event> al = new ArrayList<>();
+        Date dt = new Date(date);
+        for (Event event: events){
+            if (event.date.equals(dt)){
+                al.add(event);
+            }
+        }
+        return al;
     }
 }

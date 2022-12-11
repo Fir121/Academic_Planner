@@ -135,8 +135,12 @@ class LoginFormPanel extends AppFrame implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e){
-        System.out.println(passwordField.getPassword());
-        new HomePanel();
+		if (Registration.login(String.valueOf(passwordField.getPassword()))){
+			new HomePanel();
+		}
+        else{
+			// TODO HANDLE
+		}
     }
 }
 class RegisterFormPanel extends AppFrame implements ActionListener{
@@ -218,10 +222,12 @@ class RegisterFormPanel extends AppFrame implements ActionListener{
     }
 
     public void actionPerformed(ActionEvent e){
-        System.out.println(emailField.getText());
-        System.out.println(passwordField.getPassword());
-        // TODO FN CALL AND HANDLE HERE
-		new HomePanel();
+        if (Registration.register(emailField.getText(), String.valueOf(passwordField.getPassword()))){
+			new HomePanel();
+		}
+		else{
+			// TODO HANDLE
+		}
     }
 }
 
@@ -279,12 +285,13 @@ class HomePanel extends AppFrame{
 
 class CoursePanel extends AppFrame{
 	JPanel coursePanel;
+	Courses courses;
 
 	public CoursePanel(){
 		coursePanel = new JPanel();
         mainFrame.setContentPane(coursePanel);
 
-		ArrayList<String> courses = Courses.getCourses();
+		courses = new Courses();
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{59, 0};
@@ -299,20 +306,20 @@ class CoursePanel extends AppFrame{
 		gbc_verticalBox.gridy = 0;
 		coursePanel.add(verticalBox, gbc_verticalBox);
 
-		for (String course:courses){
+		for (Course course:courses.courses){
 			JPanel panel = new JPanel();
 			panel.setBorder(null);
 			verticalBox.add(panel);
 			
-			JLabel lblNewLabel = new JLabel(course);
+			JLabel lblNewLabel = new JLabel(course.toString());
 			panel.add(lblNewLabel);
 
 			JButton btnNewButton_1 = new JButton("Set Weekly");
-			btnNewButton_1.putClientProperty( "course", course);
+			btnNewButton_1.putClientProperty( "id", course.id);
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
-					boolean[] weekly = Courses.getWeekly(course);
+					Integer id = (Integer)((JButton)e.getSource()).getClientProperty( "id" );
+					boolean[] weekly = courses.getWeekly(id);
 					JRadioButton j1 = new JRadioButton("Monday");
 					j1.setSelected(weekly[0]);
 					JRadioButton j2 = new JRadioButton("Tuesday");
@@ -328,7 +335,7 @@ class CoursePanel extends AppFrame{
 					};
 					int option = JOptionPane.showConfirmDialog(null, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
-						if (Courses.setWeekly(course, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
+						if (courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
 							new CoursePanel();
 						}
 						else{
@@ -342,19 +349,19 @@ class CoursePanel extends AppFrame{
 			panel.add(btnNewButton_1);
 
 			JButton btnNewButton_2 = new JButton("Set Components");
-			btnNewButton_2.putClientProperty( "course", course);
+			btnNewButton_2.putClientProperty( "id", course.id);
 			btnNewButton_2.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					new CourseComponentPanel((String)((JButton)e.getSource()).getClientProperty( "course" ));
+					new CourseComponentPanel((Integer)((JButton)e.getSource()).getClientProperty( "id" ));
 				}
 			});
 			panel.add(btnNewButton_2);
 
 			JButton btnNewButton_3 = new JButton("Remove");
-			btnNewButton_3.putClientProperty( "course", course);
+			btnNewButton_3.putClientProperty( "id", course.id);
 			btnNewButton_3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (Courses.removeCourse((String)((JButton)e.getSource()).getClientProperty( "course" ))){
+					if (courses.removeCourse((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
 						new CoursePanel();
 					}
 					else{
@@ -365,17 +372,17 @@ class CoursePanel extends AppFrame{
 			panel.add(btnNewButton_3);
 
 			JButton btnNewButton_4 = new JButton("Edit");
-			btnNewButton_4.putClientProperty( "course", course);
+			btnNewButton_4.putClientProperty( "id", course.id);
 			btnNewButton_4.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
-					ArrayList<Object> courseDetails = Courses.getCourse(course);
+					Integer id = (Integer)((JButton)e.getSource()).getClientProperty( "id" );
+					Course courseDetails = courses.getCourse(id);
 					JTextField courseName = new JTextField();
-					courseName.setText((String)courseDetails.get(0));
+					courseName.setText(courseDetails.courseName);
 					JTextField courseId = new JTextField();
-					courseId.setText((String)courseDetails.get(1));
+					courseId.setText(courseDetails.courseId);
 					JSpinner courseCredits = new JSpinner();
-					courseCredits.setValue((Integer)courseDetails.get(2));
+					courseCredits.setValue(courseDetails.courseCredits);
 					Object[] message = {
 						"Course Name:", courseName,
 						"Course ID:", courseId,
@@ -384,7 +391,7 @@ class CoursePanel extends AppFrame{
 
 					int option = JOptionPane.showConfirmDialog(null, message, "Edit Course", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
-						if (Courses.setCourse(course, courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
+						if (courses.setCourse(id, courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
 							new CoursePanel();
 						}
 						else{
@@ -417,7 +424,7 @@ class CoursePanel extends AppFrame{
 
 				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
-					if (Courses.addCourse(courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
+					if (courses.addCourse(courseName.getText(), courseId.getText(), (Integer)courseCredits.getValue())){
 						new CoursePanel();
 					}
 					else{
@@ -435,12 +442,13 @@ class CoursePanel extends AppFrame{
 
 class CourseComponentPanel extends AppFrame{
 	JPanel courseComponentPanel;
+	Components components;
 
-	public CourseComponentPanel(String course){
+	public CourseComponentPanel(int courseId){
 		courseComponentPanel = new JPanel();
         mainFrame.setContentPane(courseComponentPanel);
 
-		ArrayList<String> components = Courses.getComponents(course);
+		components =new Components(courseId);
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{59, 0};
@@ -460,21 +468,20 @@ class CourseComponentPanel extends AppFrame{
 		gbc_verticalBox.gridy = 0;
 		courseComponentPanel.add(verticalBox, gbc_verticalBox);
 
-		for (String component:components){
+		for (Component component:components.components){
 			JPanel panel = new JPanel();
 			panel.setBorder(null);
 			verticalBox.add(panel);
 			
-			JLabel lblNewLabel = new JLabel(component);
+			JLabel lblNewLabel = new JLabel(component.componentName);
 			panel.add(lblNewLabel);
 
 			JButton btnNewButton_3 = new JButton("Remove");
-			btnNewButton_3.putClientProperty( "course", course);
-			btnNewButton_3.putClientProperty( "component", component);
+			btnNewButton_3.putClientProperty( "componentid", component.id);
 			btnNewButton_3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (Courses.removeComponent((String)((JButton)e.getSource()).getClientProperty( "course" ), (String)((JButton)e.getSource()).getClientProperty( "component" ))){
-						new CourseComponentPanel((String)((JButton)e.getSource()).getClientProperty( "course" ));
+					if (components.removeComponent((Integer)((JButton)e.getSource()).getClientProperty( "componentid" ))){
+						new CourseComponentPanel(components.courseId);
 					}
 					else{
 						//failed
@@ -484,23 +491,21 @@ class CourseComponentPanel extends AppFrame{
 			panel.add(btnNewButton_3);
 
 			JButton btnNewButton_4 = new JButton("Edit");
-			btnNewButton_4.putClientProperty( "course", course);
-			btnNewButton_4.putClientProperty( "component", component);
+			btnNewButton_4.putClientProperty( "componentid", component.id);
 			btnNewButton_4.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
-					String component = (String)((JButton)e.getSource()).getClientProperty( "component" );
+					Integer componentId = (Integer)((JButton)e.getSource()).getClientProperty( "componentid" );
 
-					ArrayList<Object> componentDetails = Courses.getComponent(course,component);
+					Component componentDetails = components.getComponent(componentId);
 
 					JTextField componentName = new JTextField();
-					componentName.setText((String)componentDetails.get(0));
+					componentName.setText(componentDetails.componentName);
 
 					JDateChooser  componentDate = new JDateChooser();
-					componentDate.setDate((Date)componentDetails.get(1));
+					componentDate.setDate(componentDetails.componentDate);
 
 					JTextField componentPercentage = new JTextField();
-					componentPercentage.setText(String.valueOf(componentDetails.get(2)));
+					componentPercentage.setText(String.valueOf(componentDetails.componentPercentage));
 
 					Object[] message = {
 						"Component Name:", componentName,
@@ -510,8 +515,8 @@ class CourseComponentPanel extends AppFrame{
 
 					int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
-						if (Courses.editComponent(course, component, componentName.getText(), componentDate.getDate(), Double.valueOf(componentPercentage.getText()))){
-							new CourseComponentPanel(course);
+						if (components.editComponent(componentId, componentName.getText(), componentDate.getDate(), Double.valueOf(componentPercentage.getText()))){
+							new CourseComponentPanel(components.courseId);
 						}
 						else{
 							// failed
@@ -527,14 +532,11 @@ class CourseComponentPanel extends AppFrame{
 		
 
 		JButton addComponent = new JButton("Add Component");
-		addComponent.putClientProperty( "course", course);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = 0;
 		gbc_btnNewButton.gridy = 1;
 		addComponent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String course = (String)((JButton)e.getSource()).getClientProperty( "course" );
-
 				JTextField componentName = new JTextField();
 
 				JDateChooser  componentDate = new JDateChooser();
@@ -549,8 +551,8 @@ class CourseComponentPanel extends AppFrame{
 
 				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
-					if (Courses.addComponent(course, componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
-						new CourseComponentPanel(course);
+					if (components.addComponent(componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
+						new CourseComponentPanel(components.courseId);
 					}
 					else{
 						// failed
@@ -594,7 +596,7 @@ class CalendarPanel extends AppFrame{
 		but.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField eventName = new JTextField();
-				JTextField  eventCategory = new JTextField();
+				JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
 				JDateChooser eventDate = new JDateChooser();
 				JRadioButton remind = new JRadioButton("Reminder?");
 				Object[] message = {
@@ -606,7 +608,7 @@ class CalendarPanel extends AppFrame{
 
 				int option = JOptionPane.showConfirmDialog(null, message, "Add Event", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
-					if (CalendarEvents.addEvent(eventName.getText(), eventCategory.getText(), eventDate.getDate(), remind.isSelected())){
+					if (CalendarEvents.addEvent(eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
 						new CalendarPanel();
 					}
 					else{
