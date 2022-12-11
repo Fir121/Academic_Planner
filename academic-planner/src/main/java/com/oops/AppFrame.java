@@ -298,16 +298,33 @@ class CoursePanel extends AppFrame{
 		courses = new Courses();
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{59, 0};
-		gbl_contentPane.rowHeights = new int[]{48, 107, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWidths = new int[]{0,59, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 107, 0};
+		gbl_contentPane.columnWeights = new double[]{0.5,1.0,1.0,Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.5, 1.0,1.0, Double.MIN_VALUE};
 		coursePanel.setLayout(gbl_contentPane);
+
+		JPanel pane = new JPanel();
+		GridBagConstraints gbc_pane = new GridBagConstraints();
+		gbc_pane.anchor = GridBagConstraints.WEST;
+		gbc_pane.insets = new Insets(0, 0, 5, 5);
+		gbc_pane.fill = GridBagConstraints.VERTICAL;
+		gbc_pane.gridx = 0;
+		gbc_pane.gridy = 0;
+		coursePanel.add(pane, gbc_pane);
+		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JButton btnNewButton1 = new JButton("Back");
+		btnNewButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new HomePanel();
+		}});
+		pane.add(btnNewButton1);
 
 		Box verticalBox = Box.createVerticalBox();
 		GridBagConstraints gbc_verticalBox = new GridBagConstraints();
-		gbc_verticalBox.gridx = 0;
-		gbc_verticalBox.gridy = 0;
+		gbc_verticalBox.gridx = 1;
+		gbc_verticalBox.gridy = 1;
 		coursePanel.add(verticalBox, gbc_verticalBox);
 
 		for (Course course:courses.courses){
@@ -409,8 +426,8 @@ class CoursePanel extends AppFrame{
 
 		JButton addCourse = new JButton("Add Course");
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 1;
+		gbc_btnNewButton.gridx = 1;
+		gbc_btnNewButton.gridy = 2;
 		addCourse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField courseName = new JTextField();
@@ -449,21 +466,33 @@ class CourseComponentPanel extends AppFrame{
 		components =new Components(courseCode);
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{59, 0};
-		gbl_contentPane.rowHeights = new int[]{48, 107, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWidths = new int[]{0,59, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 107, 0};
+		gbl_contentPane.columnWeights = new double[]{0.5,1.0,1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.5,1.0, 1.0, Double.MIN_VALUE};
 		courseComponentPanel.setLayout(gbl_contentPane);
 
-		/* name of course should be heading
-		JLabel lbl = new JLabel(course);
-		courseComponentPanel.add(lbl);
-		 */
+		JPanel pane = new JPanel();
+		GridBagConstraints gbc_pane = new GridBagConstraints();
+		gbc_pane.anchor = GridBagConstraints.WEST;
+		gbc_pane.insets = new Insets(0, 0, 5, 5);
+		gbc_pane.fill = GridBagConstraints.VERTICAL;
+		gbc_pane.gridx = 0;
+		gbc_pane.gridy = 0;
+		courseComponentPanel.add(pane, gbc_pane);
+		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JButton btnNewButton1 = new JButton("Back");
+		btnNewButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new CoursePanel();
+		}});
+		pane.add(btnNewButton1);
 
 		Box verticalBox = Box.createVerticalBox();
 		GridBagConstraints gbc_verticalBox = new GridBagConstraints();
-		gbc_verticalBox.gridx = 0;
-		gbc_verticalBox.gridy = 0;
+		gbc_verticalBox.gridx = 1;
+		gbc_verticalBox.gridy = 1;
 		courseComponentPanel.add(verticalBox, gbc_verticalBox);
 
 		for (Component component:components.components){
@@ -535,8 +564,8 @@ class CourseComponentPanel extends AppFrame{
 
 		JButton addComponent = new JButton("Add Component");
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 1;
+		gbc_btnNewButton.gridx = 1;
+		gbc_btnNewButton.gridy = 2;
 		addComponent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JTextField componentName = new JTextField();
@@ -577,9 +606,26 @@ class CalendarPanel extends AppFrame{
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0,1,0};
 		gbl_contentPane.rowHeights = new int[]{0,4, 1,0};
-		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWeights = new double[]{0.5, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.5, 1.0, 1.0, 1.0, Double.MIN_VALUE};
 		calendarPanel.setLayout(gbl_contentPane);
+
+		JPanel pane = new JPanel();
+		GridBagConstraints gbc_pane = new GridBagConstraints();
+		gbc_pane.anchor = GridBagConstraints.WEST;
+		gbc_pane.insets = new Insets(0, 0, 5, 5);
+		gbc_pane.fill = GridBagConstraints.VERTICAL;
+		gbc_pane.gridx = 0;
+		gbc_pane.gridy = 0;
+		calendarPanel.add(pane, gbc_pane);
+		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JButton btnNewButton1 = new JButton("Back");
+		btnNewButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new HomePanel();
+		}});
+		pane.add(btnNewButton1);
 
 		// put cal panel on top
 		GridBagConstraints gbc_pos = new GridBagConstraints();
@@ -640,16 +686,33 @@ class AttendancePanel extends AppFrame{
 		attendances = new Attendances();
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{59, 0};
-		gbl_contentPane.rowHeights = new int[]{48, 107, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWidths = new int[]{0,59, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 107, 0};
+		gbl_contentPane.columnWeights = new double[]{0.5,1.0,1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.5,1.0, 1.0, Double.MIN_VALUE};
 		attendancePanel.setLayout(gbl_contentPane);
+
+		JPanel pane = new JPanel();
+		GridBagConstraints gbc_pane = new GridBagConstraints();
+		gbc_pane.anchor = GridBagConstraints.WEST;
+		gbc_pane.insets = new Insets(0, 0, 5, 5);
+		gbc_pane.fill = GridBagConstraints.VERTICAL;
+		gbc_pane.gridx = 0;
+		gbc_pane.gridy = 0;
+		attendancePanel.add(pane, gbc_pane);
+		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JButton btnNewButton1 = new JButton("Back");
+		btnNewButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new HomePanel();
+		}});
+		pane.add(btnNewButton1);
 
 		Box verticalBox = Box.createVerticalBox();
 		GridBagConstraints gbc_verticalBox = new GridBagConstraints();
-		gbc_verticalBox.gridx = 0;
-		gbc_verticalBox.gridy = 0;
+		gbc_verticalBox.gridx = 1;
+		gbc_verticalBox.gridy = 1;
 		attendancePanel.add(verticalBox, gbc_verticalBox);
 
 		for (Attendance attendance:attendances.attendances){
@@ -713,9 +776,26 @@ class MarkAttendancePanel extends AppFrame{
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0,1,0};
 		gbl_contentPane.rowHeights = new int[]{0,5,0};
-		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWeights = new double[]{0.5, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.5, 1.0, 1.0, Double.MIN_VALUE};
 		markAttendancePanel.setLayout(gbl_contentPane);
+
+		JPanel pane = new JPanel();
+		GridBagConstraints gbc_pane = new GridBagConstraints();
+		gbc_pane.anchor = GridBagConstraints.WEST;
+		gbc_pane.insets = new Insets(0, 0, 5, 5);
+		gbc_pane.fill = GridBagConstraints.VERTICAL;
+		gbc_pane.gridx = 0;
+		gbc_pane.gridy = 0;
+		markAttendancePanel.add(pane, gbc_pane);
+		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JButton btnNewButton1 = new JButton("Back");
+		btnNewButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new AttendancePanel();
+		}});
+		pane.add(btnNewButton1);
 
 		// put cal panel on top
 		GridBagConstraints gbc_pos = new GridBagConstraints();
