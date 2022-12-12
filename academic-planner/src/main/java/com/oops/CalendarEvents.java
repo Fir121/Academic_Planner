@@ -5,23 +5,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class Event{
-    int id;
+    Integer id;
     String eventName;
     String category;
     Date date;
-    boolean reminder;
-    public Event(int id, String eventName, String category, Date date, boolean reminder){
+    Boolean reminder;
+    public Event(Integer id, String eventName, String category, Date date, Boolean reminder){
         this.id = id;
         this.eventName = eventName;
+        this.category = category;
         this.date = date;
         this.reminder = reminder;
-        for (int i=0; i<Constants.CATEGORIES.length; i++){
-            if (Constants.CATEGORIES[i].equalsIgnoreCase(category)){
-                this.category = Constants.CATEGORIES[i];
-                return;
-            }
-        }
-        this.category = Constants.CATEGORIES[0];
     }
 }
 
@@ -29,18 +23,37 @@ public class CalendarEvents {
     ArrayList<Event> events;
     public CalendarEvents(int year, int month){
         events = getEvents(year,month);
+        System.out.println(events);
     }
     private ArrayList<Event> getEvents(int year, int month){
-        // get events from sql and store in ARRAYLIST with event objects
-        ArrayList<Event> events = new ArrayList<>();
-        events.add(new Event(1,"Event 1", "Holiday", DateAlternate.date(year+"/"+month+"/1"), false));
-        events.add(new Event(2,"Event 2", "Component", DateAlternate.date(year+"/"+month+"/2"), false));
-        return events;
+        ArrayList<Event> al = new ArrayList<>();
+        ResultSet rs = new SQL().selectData("select * from events where date like '"+year+"/"+month+"/%'");
+        try{
+            while (rs.next()){
+                al.add(new Event(rs.getInt("id"), rs.getString("name"), rs.getString("category"), DateAlternate.date(rs.getString("date")), (rs.getInt("reminder") == 1)?true:false));
+            }
+        }
+        catch (SQLException e){}
+        rs = new SQL().selectData("select courses.code || '<br/>' || components.name as 'name', components.date as 'date' from components join courses;");
+        try{
+            while (rs.next()){
+                al.add(new Event(null, "<html>"+rs.getString("name")+"</html>", "Component", DateAlternate.date(rs.getString("date")), null));
+            }
+        }
+        catch (SQLException e){}
+        return al;
     }
     
     public static boolean addEvent(String name, String category, Date date, boolean remind){
-        // add event to db
-        return true;
+        return new SQL().changeData("insert into events('name', 'category', 'date', 'reminder') values(?,?,?,?)",name,category,DateAlternate.getString(date),(remind)?1:0);
+    }
+
+    public static boolean editEvent(int id, String name, String category, Date date, boolean remind){
+        return new SQL().changeData("update events set name=?, category=?, date=?, reminder=? where id=?",name,category,DateAlternate.getString(date),(remind)?1:0,id);
+    }
+
+    public static boolean deleteEvent(int id){
+        return new SQL().changeData("delete from events where id=?",id);
     }
 
     public Event getEvent(int id){

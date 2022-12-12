@@ -459,11 +459,11 @@ class CourseComponentPanel extends AppFrame{
 	JPanel courseComponentPanel;
 	Components components;
 
-	public CourseComponentPanel(int courseCode){
+	public CourseComponentPanel(int courseId){
 		courseComponentPanel = new JPanel();
         mainFrame.setContentPane(courseComponentPanel);
 
-		components =new Components(courseCode);
+		components = new Components(courseId);
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0,59, 0};
@@ -508,7 +508,7 @@ class CourseComponentPanel extends AppFrame{
 			btnNewButton_3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (Components.removeComponent((Integer)((JButton)e.getSource()).getClientProperty( "componentid" ))){
-						new CourseComponentPanel(components.courseCode);
+						new CourseComponentPanel(components.courseId);
 					}
 					else{
 						//failed
@@ -545,7 +545,7 @@ class CourseComponentPanel extends AppFrame{
 						try{
 							Double percentage = Double.valueOf(componentPercentage.getText());
 							if (components.editComponent(componentId, componentName.getText(), componentDate.getDate(), percentage)){
-								new CourseComponentPanel(components.courseCode);
+								new CourseComponentPanel(components.courseId);
 							}
 							else{
 								// failed
@@ -580,10 +580,10 @@ class CourseComponentPanel extends AppFrame{
 					"Component Percentage:",componentPercentage
 				};
 
-				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
+				int option = JOptionPane.showConfirmDialog(null, message, "Add Component", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
-					if (Components.addComponent(componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
-						new CourseComponentPanel(components.courseCode);
+					if (Components.addComponent(components.courseId, componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
+						new CourseComponentPanel(components.courseId);
 					}
 					else{
 						// failed

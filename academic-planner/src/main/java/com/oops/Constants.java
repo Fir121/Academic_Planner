@@ -3,7 +3,7 @@ package com.oops;
 import java.util.*;
 
 public class Constants {
-    public static final String[] CATEGORIES = new String[]{"Default","Holiday","Component","Event"};
+    public static final String[] CATEGORIES = new String[]{"Default","Holiday","Event"};
     public static Date START,END;
 
     static{

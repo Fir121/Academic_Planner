@@ -21,28 +21,38 @@ class Component implements Comparable<Component>{
 }
 
 public class Components {
-    int courseCode;
+    int courseId;
     ArrayList<Component> components;
-    public Components(int courseCode){
-        this.courseCode = courseCode;
-        components = getComponents(courseCode);
+    public Components(int courseId){
+        this.courseId = courseId;
+        components = getComponents(courseId);
     }
-    private ArrayList<Component> getComponents(int courseCode){
+    private ArrayList<Component> getComponents(int courseId){
         ArrayList<Component> al = new ArrayList<>();
-        al.add(new Component(0, "T1", DateAlternate.date("2022/12/4"), 25.0));
-        al.add(new Component(1, "T1", DateAlternate.date("2022/12/4"), 25.0));
+        ResultSet rs = new SQL().selectData("select * from components where courseid="+courseId);
+        try{
+            while (rs.next()){
+                al.add(new Component(rs.getInt("id"), rs.getString("name"), DateAlternate.date(rs.getString("date")), rs.getDouble("percentage")));
+            }
+        }
+        catch (SQLException e){}
         return al;
     }
     public static boolean removeComponent(int id){
-        return true;
+        return new SQL().changeData("delete from components where id=?",id);
     }
-    public static boolean addComponent(String componentName, Date componentDate, Double componentPercentage){
-        return true;
+    public static boolean addComponent(int courseId, String componentName, Date componentDate, Double componentPercentage){
+        return new SQL().changeData("insert into components('courseid', 'name', 'date', 'percentage') values(?,?,?,?)",courseId,componentName,DateAlternate.getString(componentDate),componentPercentage);
     }
     public Component getComponent(int id){
-        return new Component(0, "T1", DateAlternate.date("2022/12/4"), 25.0);
+        for (Component component: components){
+            if (component.id == id){
+                return component;
+            }
+        }
+        return null;
     }
     public boolean editComponent(int id, String componentName, Date componentDate, Double componentPercentage){
-        return true;
+        return new SQL().changeData("update components set name=?, date=?, percentage=? where id=?",componentName,DateAlternate.getString(componentDate),componentPercentage,id);
     }
 }

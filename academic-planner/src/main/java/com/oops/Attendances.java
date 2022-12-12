@@ -23,7 +23,7 @@ class Attendance{
         this.absences = absences;
     }
 }
-
+// TODO ADD CANCELLED CLASS OR EXTRA CLASS OPTION
 public class Attendances {
     ArrayList<Attendance> attendances;
     public Attendances(){

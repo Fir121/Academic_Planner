@@ -149,40 +149,60 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 else if (!attendance){
                     if (events.containsDate(cur_year+"/"+cur_month+"/"+day)){
                         for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
-                            JButton event_x = new JButton();
-                            event_x.setText(ex.eventName);
-                            event_x.putClientProperty("eventid", ex.id);
-                            event_x.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    int eventId = (Integer)((JButton)e.getSource()).getClientProperty( "eventid" );
-                                    Event eventDetails = events.getEvent(eventId);
-                                    JTextField eventName = new JTextField();
-                                    eventName.setText(eventDetails.eventName);
-                                    JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
-                                    eventCategory.setSelectedItem(eventDetails.category);
-                                    JDateChooser eventDate = new JDateChooser();
-                                    eventDate.setDate(eventDetails.date);
-                                    JRadioButton remind = new JRadioButton("Reminder?");
-                                    remind.setSelected(eventDetails.reminder);
-                                    Object[] message = {
-                                        "Event Name:", eventName,
-                                        "Event Category:", eventCategory,
-                                        "Event Date:",eventDate, 
-                                        remind
-                                    };
-                    
-                                    int option = JOptionPane.showConfirmDialog(null, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
-                                    if (option == JOptionPane.OK_OPTION) {
-                                        if (CalendarEvents.addEvent(eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
-                                            new CalendarPanel();
-                                        }
-                                        else{
-                                            // failed
+                            if (ex.category.equals("Component")){
+                                JLabel event_l = new JLabel();
+                                event_l.setText(ex.eventName);
+                                verticalBox.add(event_l);
+                            }
+                            else{
+                                JButton event_x = new JButton();
+                                event_x.setText(ex.eventName);
+                                event_x.putClientProperty("eventid", ex.id);
+                                event_x.addActionListener(new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        int eventId = (Integer)((JButton)e.getSource()).getClientProperty( "eventid" );
+                                        Event eventDetails = events.getEvent(eventId);
+                                        JTextField eventName = new JTextField();
+                                        eventName.setText(eventDetails.eventName);
+                                        JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
+                                        eventCategory.setSelectedItem(eventDetails.category);
+                                        JDateChooser eventDate = new JDateChooser();
+                                        eventDate.setDate(eventDetails.date);
+                                        JRadioButton remind = new JRadioButton("Reminder?");
+                                        remind.setSelected(eventDetails.reminder);
+
+                                        JButton deleteButton = new JButton("Delete Event?");
+                                        deleteButton.putClientProperty( "id", eventDetails.id);
+                                        deleteButton.addActionListener(new ActionListener() {
+                                            public void actionPerformed(ActionEvent e) {
+                                                if (CalendarEvents.deleteEvent((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
+                                                    JOptionPane.getRootFrame().dispose();
+                                                    new CalendarPanel();
+                                                }
+                                                else{
+                                                    // failed
+                                                }
+                                            }
+                                        });
+                                        Object[] message = {
+                                            "Event Name:", eventName,
+                                            "Event Category:", eventCategory,
+                                            "Event Date:",eventDate, 
+                                            remind, deleteButton
+                                        };
+                                        int option = JOptionPane.showConfirmDialog(null, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
+                                        if (option == JOptionPane.OK_OPTION) {
+                                            if (CalendarEvents.editEvent(eventDetails.id,eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
+                                                new CalendarPanel();
+                                            }
+                                            else{
+                                                // failed
+                                            }
                                         }
                                     }
-                                }
-                            });
-                            verticalBox.add(event_x);
+                                });
+                                verticalBox.add(event_x);
+                            }
                         }
                     }
                 }
