@@ -20,6 +20,7 @@ class Component implements Comparable<Component>{
     }
 }
 
+// check sum of percentages
 public class Components {
     int courseId;
     ArrayList<Component> components;

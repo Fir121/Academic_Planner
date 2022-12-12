@@ -116,37 +116,57 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 gbc_panel_vbx.gridy = 1;
                 panel.add(verticalBox, gbc_panel_vbx);
                 
-                if(attendance && Attendances.compareDateToWeekArray(DateAlternate.date(cur_year+"/"+cur_month+"/"+day), attendanceob.weekly)){
+                int statusClass = 0;
+                if(attendance){
+                    SpecialClass sc = Attendances.getSpecial(courseid, DateAlternate.date(cur_year+"/"+cur_month+"/"+day));
+
                     boolean flag = false;
                     for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                         if (ex.category.equals("Holiday")){
                             flag = true;
                         }
                     }
-                    if (!flag){
-                        if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0){
-                            JRadioButton absence = new JRadioButton("Present");
-                            if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
-                                absence.setSelected(true);
-                            }
-                            absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
-                            final int cyear = cur_year;
-                            final int cmonth = cur_month;
-                            absence.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
-                                        new MarkAttendancePanel(courseid, cyear, cmonth);
-                                    }
-                                    else{
-                                        // TODO ERROR
-                                    }
-                                }
-                            });
-                            verticalBox.add(absence);
+                    final int cyear = cur_year;
+                    final int cmonth = cur_month;
+
+                    if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0 && ((sc != null && sc.status) || (sc == null && Attendances.compareDateToWeekArray(DateAlternate.date(cur_year+"/"+cur_month+"/"+day), attendanceob.weekly) && !flag))){
+                        statusClass = 1;
+                        JRadioButton absence = new JRadioButton("Present");
+                        if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
+                            absence.setSelected(true);
                         }
+                        absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
+                        absence.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
+                                    new MarkAttendancePanel(courseid, cyear, cmonth);
+                                }
+                                else{
+                                    // TODO ERROR
+                                }
+                            }
+                        });
+                        verticalBox.add(absence);
+                    }
+                
+                    if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0){
+                        JButton toggle = new JButton("Toggle Class");
+                        toggle.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
+                        toggle.putClientProperty("status", statusClass);
+                        toggle.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                if (Attendances.toggleSpecial(courseid, DateAlternate.date((String)((JButton)e.getSource()).getClientProperty( "date" )), (Integer)((JButton)e.getSource()).getClientProperty( "status" ))){
+                                    new MarkAttendancePanel(courseid, cyear, cmonth);
+                                }
+                                else{
+                                    // TODO ERROR
+                                }
+                            }
+                        });
+                        verticalBox.add(toggle);
                     }
                 }
-                else if (!attendance){
+                else{
                     if (events.containsDate(cur_year+"/"+cur_month+"/"+day)){
                         for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                             if (ex.category.equals("Component")){
