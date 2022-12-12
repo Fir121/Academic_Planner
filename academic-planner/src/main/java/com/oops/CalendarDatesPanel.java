@@ -67,6 +67,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         renderDate(-1*difference);
     }
     private void renderDate(int cur_year, int cur_month){
+        // TODO ATTENDANCE PERCENTAGES
         events = new CalendarEvents(cur_year, cur_month);
         Attendance attendanceob = new Attendances().getAttendance(courseid);
 

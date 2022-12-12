@@ -3,6 +3,8 @@ package com.oops;
 class App{
     public static void main(String args[]){
         // Initial event (onload)
+        new SQL();
+
         if (Registration.userHasRegistered()){
                 new LoginPanel();
         }

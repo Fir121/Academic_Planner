@@ -1,6 +1,8 @@
 package com.oops;
 
 import java.util.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 class Event{
     int id;
