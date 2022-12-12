@@ -67,7 +67,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         renderDate(-1*difference);
     }
     private void renderDate(int cur_year, int cur_month){
-        // TODO ATTENDANCE PERCENTAGES
         events = new CalendarEvents(cur_year, cur_month);
         Attendance attendanceob = new Attendances().getAttendance(courseid);
 
@@ -125,24 +124,26 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                         }
                     }
                     if (!flag){
-                        JRadioButton absence = new JRadioButton("Present");
-                        if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
-                            absence.setSelected(true);
-                        }
-                        absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
-                        final int cyear = cur_year;
-                        final int cmonth = cur_month;
-                        absence.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
-                                    new MarkAttendancePanel(courseid, cyear, cmonth);
-                                }
-                                else{
-                                    // TODO ERROR
-                                }
+                        if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0){
+                            JRadioButton absence = new JRadioButton("Present");
+                            if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
+                                absence.setSelected(true);
                             }
-                        });
-                        verticalBox.add(absence);
+                            absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
+                            final int cyear = cur_year;
+                            final int cmonth = cur_month;
+                            absence.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
+                                        new MarkAttendancePanel(courseid, cyear, cmonth);
+                                    }
+                                    else{
+                                        // TODO ERROR
+                                    }
+                                }
+                            });
+                            verticalBox.add(absence);
+                        }
                     }
                 }
                 else if (!attendance){
@@ -338,9 +339,9 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
     private void setLayoutStyle(){
         GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0,0};
 		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0,1.0, Double.MIN_VALUE};
 		setLayout(gbl_contentPane);
     }
     public void actionPerformed(ActionEvent e){
