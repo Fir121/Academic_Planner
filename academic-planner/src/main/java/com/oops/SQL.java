@@ -8,14 +8,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SQL {
-    public Connection connection = null;
+    // by being static this ensure there will only be one connection open at a time
+    private static Connection connection = null;
 
     static{
+        initiateConnection();
         try{
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Courses' ('id' INTEGER NOT NULL, 'name' TEXT, 'code' TEXT, 'credits' INTEGER, PRIMARY KEY('id' AUTOINCREMENT))");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Components'('courseid' INTEGER NOT NULL, 'id' INTEGER NOT NULL, 'name' TEXT, 'date' TEXT, 'percentage' NUMERIC, PRIMARY KEY('id' AUTOINCREMENT), FOREIGN KEY('courseid') REFERENCES Courses('id'))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Courses' ('id' INTEGER NOT NULL, 'name' TEXT, 'code' TEXT, 'credits' INTEGER CHECK(credits >= 0), PRIMARY KEY('id' AUTOINCREMENT))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Components'('courseid' INTEGER NOT NULL, 'id' INTEGER NOT NULL, 'name' TEXT, 'date' TEXT, 'percentage' NUMERIC CHECK(percentage >= 0), PRIMARY KEY('id' AUTOINCREMENT), FOREIGN KEY('courseid') REFERENCES Courses('id'))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Weekly'('courseid' INTEGER NOT NULL, 'monday' INTEGER DEFAULT 0, 'tuesday' INTEGER DEFAULT 0, 'wednesday' INTEGER DEFAULT 0, 'thursday' INTEGER DEFAULT 0, 'friday' INTEGER DEFAULT 0, PRIMARY KEY('courseid'), FOREIGN KEY('courseid') REFERENCES 'Courses'('id'))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Absences'('courseid' INTEGER NOT NULL, 'date' TEXT, FOREIGN KEY('courseid') REFERENCES Courses('id'), UNIQUE('courseid','date'))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'SpecialClasses'('courseid' INTEGER NOT NULL, 'date' TEXT, 'active' INTEGER, FOREIGN KEY('courseid') REFERENCES Courses('id'), UNIQUE('courseid','date'))");
@@ -25,9 +26,16 @@ public class SQL {
             System.out.println(e);
             PopupFrame.showErrorMessage("Could not create tables");
         }
+        finally{
+            closeConn();
+        }
     }
 
     public SQL() {
+        initiateConnection();   
+    }
+
+    public static void initiateConnection(){
         try{
             connection = DriverManager.getConnection("jdbc:sqlite:database.db");
         }
@@ -37,11 +45,19 @@ public class SQL {
         }
     }
 
+    public static void closeConn(){
+        try{
+            connection.close();
+        }
+        catch(SQLException e){}
+        catch(Exception e){}
+    }
+
     public ResultSet selectData(String q){
         try {
             Statement stmt  = connection.createStatement();
             ResultSet rs    = stmt.executeQuery(q);
-            
+
             return rs;
         } catch (SQLException e) {
             System.out.println(e);
@@ -57,6 +73,7 @@ public class SQL {
                 pstmt.setObject(i + 1, values[i]);
             }
             pstmt.executeUpdate();
+            connection.close();
             return true;
         }
         catch (SQLException e){

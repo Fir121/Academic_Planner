@@ -37,6 +37,10 @@ public class Courses {
             }
         }
         catch (SQLException e){}
+        finally{
+            SQL.closeConn();
+        }
+        
         return al;
     }
     public Course getCourse(int id){
@@ -52,14 +56,16 @@ public class Courses {
     }
     public static boolean addCourse(String courseName, String courseCode, Integer courseCredits){
         SQL sql = new SQL();
-        boolean x = sql.changeData("insert into courses('name', 'code', 'credits') values(?,?,?)",courseName,courseCode,courseCredits);
-        boolean y = sql.changeData("insert into weekly('courseid') values(last_insert_rowid())");
-        return x && y;
+        if (sql.changeData("insert into courses('name', 'code', 'credits') values(?,?,?)",courseName,courseCode,courseCredits)){
+            SQL.initiateConnection();
+            return sql.changeData("insert into weekly('courseid') values((select seq from sqlite_sequence where name='Courses'))");
+        }
+        return false;
     }
     public static boolean setCourse(int id, String courseName, String courseCode, Integer courseCredits){
         return new SQL().changeData("update courses set name=?, code=?, credits=? where id=?",courseName,courseCode,courseCredits,id);
     }
-    public boolean[] getWeekly(int id){
+    public static boolean[] getWeekly(int id){
         boolean[] weekly = new boolean[]{false,false,false,false,false};
         ResultSet rs = new SQL().selectData("select * from weekly where courseid="+id);
         try{

@@ -141,9 +141,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                 if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
                                     new MarkAttendancePanel(courseid, cyear, cmonth);
                                 }
-                                else{
-                                    // TODO ERROR
-                                }
                             }
                         });
                         verticalBox.add(absence);
@@ -157,9 +154,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                             public void actionPerformed(ActionEvent e) {
                                 if (Attendances.toggleSpecial(courseid, DateAlternate.date((String)((JButton)e.getSource()).getClientProperty( "date" )), (Integer)((JButton)e.getSource()).getClientProperty( "status" ))){
                                     new MarkAttendancePanel(courseid, cyear, cmonth);
-                                }
-                                else{
-                                    // TODO ERROR
                                 }
                             }
                         });
@@ -199,9 +193,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                                     JOptionPane.getRootFrame().dispose();
                                                     new CalendarPanel();
                                                 }
-                                                else{
-                                                    // failed
-                                                }
                                             }
                                         });
                                         Object[] message = {
@@ -214,9 +205,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                         if (option == JOptionPane.OK_OPTION) {
                                             if (CalendarEvents.editEvent(eventDetails.id,eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
                                                 new CalendarPanel();
-                                            }
-                                            else{
-                                                // failed
                                             }
                                         }
                                     }

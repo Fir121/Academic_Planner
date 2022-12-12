@@ -1,10 +1,7 @@
 package com.oops;
-//TODO ADD SETTINGS AS CONSTANTS, DO ICON DESIGNS, HANDLE MESSAGEBOXES, restructure backend, colour code categories, ADD LIMITS TO SCROLL DATES
+// TODO ICON DESIGNS, HANDLE MESSAGEBOXES, colour code categories, calculate projected grade by asking for grade, using components so far and incorporating attendance
 class App{
     public static void main(String args[]){
-        // Initial event (onload)
-        new SQL();
-
         if (Registration.userHasRegistered()){
                 new LoginPanel();
         }

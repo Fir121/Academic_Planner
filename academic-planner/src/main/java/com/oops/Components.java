@@ -37,12 +37,24 @@ public class Components {
             }
         }
         catch (SQLException e){}
+        finally{
+            SQL.closeConn();
+        }
         return al;
     }
     public static boolean removeComponent(int id){
         return new SQL().changeData("delete from components where id=?",id);
     }
     public static boolean addComponent(int courseId, String componentName, Date componentDate, Double componentPercentage){
+        Components all = new Components(courseId);
+        double total_percentage = 0;
+        for (Component c: all.components){
+            total_percentage += c.componentPercentage;
+        }
+        if (total_percentage+componentPercentage > 100.0){
+            PopupFrame.showErrorMessage("Invalid Percentage");
+            return false;
+        }
         return new SQL().changeData("insert into components('courseid', 'name', 'date', 'percentage') values(?,?,?,?)",courseId,componentName,DateAlternate.getString(componentDate),componentPercentage);
     }
     public Component getComponent(int id){
@@ -53,7 +65,16 @@ public class Components {
         }
         return null;
     }
-    public boolean editComponent(int id, String componentName, Date componentDate, Double componentPercentage){
+    public static boolean editComponent(int courseId, int id, String componentName, Date componentDate, Double componentPercentage){
+        Components all = new Components(courseId);
+        double total_percentage = 0;
+        for (Component c: all.components){
+            total_percentage += c.componentPercentage;
+        }
+        if (total_percentage+componentPercentage > 100.0){
+            PopupFrame.showErrorMessage("Invalid Percentage");
+            return false;
+        }
         return new SQL().changeData("update components set name=?, date=?, percentage=? where id=?",componentName,DateAlternate.getString(componentDate),componentPercentage,id);
     }
 }

@@ -4,7 +4,7 @@ import java.util.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+// TODO ADD ATTENDANCE CALCULATION FUNCTIONS
 class SpecialClass{
     Date date;
     Boolean status;
@@ -34,7 +34,6 @@ class Attendance{
         this.specialClasses = specialClasses;
     }
 }
-// TODO ADD CANCELLED CLASS OR EXTRA CLASS
 public class Attendances {
     ArrayList<Attendance> attendances;
     public Attendances(){
@@ -44,7 +43,7 @@ public class Attendances {
         ArrayList<Attendance> al = new ArrayList<>();
         Courses courses = new Courses();
         for (Course c: courses.courses){
-            boolean[] tempWeekly = courses.getWeekly(c.id);
+            boolean[] tempWeekly = Courses.getWeekly(c.id);
             boolean flag = false;
             for (int i=0; i<tempWeekly.length; i++){
                 if (tempWeekly[i]){
@@ -68,6 +67,9 @@ public class Attendances {
             }
         }
         catch (SQLException e){}
+        finally{
+            SQL.closeConn();
+        }
         return al;
     }
     private static ArrayList<SpecialClass> getSpecialClasses(int id){
@@ -79,6 +81,9 @@ public class Attendances {
             }
         }
         catch (SQLException e){}
+        finally{
+            SQL.closeConn();
+        }
         return al;
     }
 

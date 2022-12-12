@@ -340,7 +340,7 @@ class CoursePanel extends AppFrame{
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Integer id = (Integer)((JButton)e.getSource()).getClientProperty( "id" );
-					boolean[] weekly = courses.getWeekly(id);
+					boolean[] weekly = Courses.getWeekly(id);
 					JRadioButton j1 = new JRadioButton("Monday");
 					j1.setSelected(weekly[0]);
 					JRadioButton j2 = new JRadioButton("Tuesday");
@@ -358,9 +358,6 @@ class CoursePanel extends AppFrame{
 					if (option == JOptionPane.OK_OPTION) {
 						if (Courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
 							new CoursePanel();
-						}
-						else{
-							// failed
 						}
 					}
 				}
@@ -382,9 +379,6 @@ class CoursePanel extends AppFrame{
 				public void actionPerformed(ActionEvent e) {
 					if (Courses.removeCourse((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
 						new CoursePanel();
-					}
-					else{
-						//failed
 					}
 				}
 			});
@@ -413,9 +407,6 @@ class CoursePanel extends AppFrame{
 						if (Courses.setCourse(id, courseName.getText(), courseCode.getText(), (Integer)courseCredits.getValue())){
 							new CoursePanel();
 						}
-						else{
-							// failed
-						}
 					}
 				}
 			});
@@ -443,9 +434,6 @@ class CoursePanel extends AppFrame{
 				if (option == JOptionPane.OK_OPTION) {
 					if (Courses.addCourse(courseName.getText(), courseCode.getText(), (Integer)courseCredits.getValue())){
 						new CoursePanel();
-					}
-					else{
-						// failed
 					}
 				}
 			}
@@ -510,9 +498,6 @@ class CourseComponentPanel extends AppFrame{
 					if (Components.removeComponent((Integer)((JButton)e.getSource()).getClientProperty( "componentid" ))){
 						new CourseComponentPanel(components.courseId);
 					}
-					else{
-						//failed
-					}
 				}
 			});
 			panel.add(btnNewButton_3);
@@ -544,15 +529,12 @@ class CourseComponentPanel extends AppFrame{
 					if (option == JOptionPane.OK_OPTION) {
 						try{
 							Double percentage = Double.valueOf(componentPercentage.getText());
-							if (components.editComponent(componentId, componentName.getText(), componentDate.getDate(), percentage)){
+							if (Components.editComponent(components.courseId, componentId, componentName.getText(), componentDate.getDate(), percentage)){
 								new CourseComponentPanel(components.courseId);
-							}
-							else{
-								// failed
 							}
 						}
 						catch(NumberFormatException Exc){
-							// failed
+							PopupFrame.showErrorMessage("Invalid Number input");
 						}
 					}
 				}
@@ -584,9 +566,6 @@ class CourseComponentPanel extends AppFrame{
 				if (option == JOptionPane.OK_OPTION) {
 					if (Components.addComponent(components.courseId, componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
 						new CourseComponentPanel(components.courseId);
-					}
-					else{
-						// failed
 					}
 				}
 			}
@@ -656,9 +635,6 @@ class CalendarPanel extends AppFrame{
 				if (option == JOptionPane.OK_OPTION) {
 					if (CalendarEvents.addEvent(eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
 						new CalendarPanel();
-					}
-					else{
-						// failed
 					}
 				}
 			}
@@ -741,9 +717,6 @@ class AttendancePanel extends AppFrame{
 						if (option == JOptionPane.OK_OPTION) {
 							if (Courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
 								new AttendancePanel();
-							}
-							else{
-								// failed
 							}
 						}
 					}

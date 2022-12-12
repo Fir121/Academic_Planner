@@ -23,7 +23,6 @@ public class CalendarEvents {
     ArrayList<Event> events;
     public CalendarEvents(int year, int month){
         events = getEvents(year,month);
-        System.out.println(events);
     }
     private ArrayList<Event> getEvents(int year, int month){
         ArrayList<Event> al = new ArrayList<>();
@@ -34,6 +33,9 @@ public class CalendarEvents {
             }
         }
         catch (SQLException e){}
+        finally{
+            SQL.closeConn();
+        }
         rs = new SQL().selectData("select courses.code || '<br/>' || components.name as 'name', components.date as 'date' from components join courses;");
         try{
             while (rs.next()){
@@ -41,6 +43,9 @@ public class CalendarEvents {
             }
         }
         catch (SQLException e){}
+        finally{
+            SQL.closeConn();
+        }
         return al;
     }
     
