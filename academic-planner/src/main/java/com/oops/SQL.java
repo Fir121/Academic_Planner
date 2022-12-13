@@ -15,8 +15,8 @@ public class SQL {
         initiateConnection();
         try{
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Courses' ('id' INTEGER NOT NULL, 'name' TEXT, 'code' TEXT, 'credits' INTEGER CHECK(credits >= 0), PRIMARY KEY('id' AUTOINCREMENT))");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Components'('courseid' INTEGER NOT NULL, 'id' INTEGER NOT NULL, 'name' TEXT, 'date' TEXT, 'percentage' NUMERIC CHECK(percentage >= 0), PRIMARY KEY('id' AUTOINCREMENT), FOREIGN KEY('courseid') REFERENCES Courses('id'))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Courses' ('id' INTEGER NOT NULL, 'name' TEXT, 'code' TEXT, 'credits' INTEGER CHECK(credits >= 0), 'grade' TEXT NOT NULL DEFAULT 'Unknown', PRIMARY KEY('id' AUTOINCREMENT))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Components'('courseid' INTEGER NOT NULL, 'id' INTEGER NOT NULL, 'name' TEXT, 'date' TEXT, 'percentage' NUMERIC CHECK(percentage >= 0), 'marks' NUMERIC CHECK(percentage >= 0), PRIMARY KEY('id' AUTOINCREMENT), FOREIGN KEY('courseid') REFERENCES Courses('id'))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Weekly'('courseid' INTEGER NOT NULL, 'monday' INTEGER DEFAULT 0, 'tuesday' INTEGER DEFAULT 0, 'wednesday' INTEGER DEFAULT 0, 'thursday' INTEGER DEFAULT 0, 'friday' INTEGER DEFAULT 0, PRIMARY KEY('courseid'), FOREIGN KEY('courseid') REFERENCES 'Courses'('id'))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'Absences'('courseid' INTEGER NOT NULL, 'date' TEXT, FOREIGN KEY('courseid') REFERENCES Courses('id'), UNIQUE('courseid','date'))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS 'SpecialClasses'('courseid' INTEGER NOT NULL, 'date' TEXT, 'active' INTEGER, FOREIGN KEY('courseid') REFERENCES Courses('id'), UNIQUE('courseid','date'))");

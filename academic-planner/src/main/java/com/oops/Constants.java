@@ -5,6 +5,7 @@ import java.util.*;
 public class Constants {
     public static final String[] CATEGORIES = new String[]{"Default","Holiday","Event"};
     public static Date START,END;
+    public static final String[] GRADES = new String[]{"Unknown","A","A-","B","B-","C","C-","D","D-","E","E-","F"};
 
     static{
         Date now = new Date();

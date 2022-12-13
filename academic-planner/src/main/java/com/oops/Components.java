@@ -9,18 +9,19 @@ class Component implements Comparable<Component>{
     String componentName;
     Date componentDate;
     double componentPercentage;
-    public Component(int id, String componentName, Date componentDate, double componentPercentage){
+    Double componentMarks;
+    public Component(int id, String componentName, Date componentDate, double componentPercentage, Double componentMarks){
         this.id = id;
         this.componentName = componentName;
         this.componentDate = componentDate;
         this.componentPercentage = componentPercentage;
+        this.componentMarks = componentMarks;
     }
     public int compareTo(Component c){
         return componentDate.compareTo(c.componentDate);
     }
 }
 
-// check sum of percentages
 public class Components {
     int courseId;
     ArrayList<Component> components;
@@ -33,7 +34,7 @@ public class Components {
         ResultSet rs = new SQL().selectData("select * from components where courseid="+courseId);
         try{
             while (rs.next()){
-                al.add(new Component(rs.getInt("id"), rs.getString("name"), DateAlternate.date(rs.getString("date")), rs.getDouble("percentage")));
+                al.add(new Component(rs.getInt("id"), rs.getString("name"), DateAlternate.date(rs.getString("date")), rs.getDouble("percentage"), rs.getDouble("marks")));
             }
         }
         catch (SQLException e){}
@@ -76,5 +77,16 @@ public class Components {
             return false;
         }
         return new SQL().changeData("update components set name=?, date=?, percentage=? where id=?",componentName,DateAlternate.getString(componentDate),componentPercentage,id);
+    }
+
+    public static boolean setMarks(int courseId, int id, Double marks){
+        Course course = new Courses().getCourse(courseId);
+        Component component = new Components(courseId).getComponent(id);
+        Double max = course.courseCredits * component.componentPercentage;
+        if (marks > max){
+            PopupFrame.showErrorMessage("Invalid marks, as per credits max marks = "+max);
+            return false;
+        }
+        return new SQL().changeData("update components set marks=? where id=?", marks, id);
     }
 }

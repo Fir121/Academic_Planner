@@ -6,6 +6,7 @@ import com.toedter.calendar.JDateChooser;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Date;
 
 public class AppFrame{
     static JFrame mainFrame;
@@ -452,6 +453,7 @@ class CourseComponentPanel extends AppFrame{
         mainFrame.setContentPane(courseComponentPanel);
 
 		components = new Components(courseId);
+		Course course = new Courses().getCourse(courseId);
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0,59, 0};
@@ -476,6 +478,37 @@ class CourseComponentPanel extends AppFrame{
 				new CoursePanel();
 		}});
 		pane.add(btnNewButton1);
+		
+		JPanel upperPanel = new JPanel();
+		GridBagConstraints gbc_verticalBox_0 = new GridBagConstraints();
+		gbc_verticalBox_0.gridx = 1;
+		gbc_verticalBox_0.gridy = 0;
+		courseComponentPanel.add(upperPanel, gbc_verticalBox_0);
+
+		final Box verticalBox_0 = Box.createVerticalBox();
+		JLabel gradelbl = new JLabel("Enter your grade");
+		final JComboBox<String> grade = new JComboBox<>(Constants.GRADES);
+		grade.setSelectedItem(course.grade);
+		grade.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if (Courses.setGrade(components.courseId, String.valueOf(grade.getSelectedItem()))){
+					verticalBox_0.remove(grade);
+					new CourseComponentPanel(components.courseId);
+				}
+			}
+		});
+		verticalBox_0.add(gradelbl);
+		verticalBox_0.add(grade);
+
+		Box verticalBox_1 = Box.createVerticalBox();
+		JLabel gradepred = new JLabel("Predicted Grade");
+		JLabel predres = new JLabel("predres");
+		predres.setText(Calculator.getPredicted(courseId));
+		verticalBox_1.add(gradepred);
+		verticalBox_1.add(predres);
+
+		upperPanel.add(verticalBox_0);
+		upperPanel.add(verticalBox_1);
 
 		Box verticalBox = Box.createVerticalBox();
 		GridBagConstraints gbc_verticalBox = new GridBagConstraints();
@@ -488,7 +521,7 @@ class CourseComponentPanel extends AppFrame{
 			panel.setBorder(null);
 			verticalBox.add(panel);
 			
-			JLabel lblNewLabel = new JLabel(component.componentName);
+			JLabel lblNewLabel = new JLabel(component.componentName+" : "+component.componentPercentage+"%");
 			panel.add(lblNewLabel);
 
 			JButton btnNewButton_3 = new JButton("Remove");
@@ -540,11 +573,74 @@ class CourseComponentPanel extends AppFrame{
 				}
 			});
 			panel.add(btnNewButton_4);
+
+			if(component.componentDate.compareTo(new Date()) <= 0){
+				JButton btnNewButton_5 = new JButton("Record Marks");
+				btnNewButton_5.putClientProperty( "componentid", component.id);
+				btnNewButton_5.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						Integer componentId = (Integer)((JButton)e.getSource()).getClientProperty( "componentid" );
+
+						Component componentDetails = components.getComponent(componentId);
+
+						JTextField componentMarks = new JTextField();
+						componentMarks.setText((componentDetails.componentMarks == null)?"":String.valueOf(componentDetails.componentMarks));
+
+						Object[] message = {
+							"Marks", componentMarks
+						};
+
+						int option = JOptionPane.showConfirmDialog(null, message, "Set Marks", JOptionPane.OK_CANCEL_OPTION);
+						if (option == JOptionPane.OK_OPTION) {
+							try{
+								Double marks = Double.valueOf(componentMarks.getText());
+								if (Components.setMarks(components.courseId, componentId, marks)){
+									new CourseComponentPanel(components.courseId);
+								}
+							}
+							catch(NumberFormatException Exc){
+								PopupFrame.showErrorMessage("Invalid Number input");
+							}
+						}
+					}
+				});
+				panel.add(btnNewButton_5);
+			}
 		}
 
 		
+		JPanel lowerPanel = new JPanel();
+		JButton calcGrade = new JButton("Grade Calculator");
+		calcGrade.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				final JTextField average = new JTextField();
+				final JTextArea result = new JTextArea();
+				result.setRows(10);
+				result.setColumns(1);
+				result.setLineWrap(true);
+				JButton calculate = new JButton("Generate Range");
+				calculate.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						try{
+							Double avg = Double.parseDouble(average.getText());
+							result.setText(Calculator.calculateRange(avg));
+						}
+						catch(NumberFormatException Exc){
+							PopupFrame.showErrorMessage("Invalid Number input");
+						}
+					}
+				});
 
+				Object[] message = {
+					"Enter current class average: ", average,result,calculate
+				};
+
+				JOptionPane.showConfirmDialog(null, message, "Calculate Grade", JOptionPane.CANCEL_OPTION);
+			}
+		});
+		lowerPanel.add(calcGrade);
 		JButton addComponent = new JButton("Add Component");
+		lowerPanel.add(addComponent);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = 1;
 		gbc_btnNewButton.gridy = 2;
@@ -570,7 +666,7 @@ class CourseComponentPanel extends AppFrame{
 				}
 			}
 		});
-		courseComponentPanel.add(addComponent, gbc_btnNewButton);
+		courseComponentPanel.add(lowerPanel, gbc_btnNewButton);
 		refresh();
 	}
 }

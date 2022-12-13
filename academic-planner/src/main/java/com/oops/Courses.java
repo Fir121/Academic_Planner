@@ -9,17 +9,19 @@ class Course implements Comparable<Course>{
     String courseCode;
     String courseName;
     int courseCredits;
-    public Course(int id, String courseCode, String courseName, int courseCredits){
+    String grade;
+    public Course(int id, String courseCode, String courseName, int courseCredits, String grade){
         this.id = id;
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.courseCredits = courseCredits;
+        this.grade = grade;
     }
     public String toString(){
         return courseCode+" "+courseName;
     }
     public int compareTo(Course c){
-        return id-c.id;
+        return toString().compareTo(c.toString());
     }
 }
 public class Courses {
@@ -33,7 +35,7 @@ public class Courses {
         ResultSet rs = new SQL().selectData("select * from courses");
         try{
             while (rs.next()){
-                al.add(new Course(rs.getInt("id"), rs.getString("code"), rs.getString("name"), rs.getInt("credits")));
+                al.add(new Course(rs.getInt("id"), rs.getString("code"), rs.getString("name"), rs.getInt("credits"),rs.getString("grade")));
             }
         }
         catch (SQLException e){}
@@ -83,6 +85,10 @@ public class Courses {
     }
     public static boolean setWeekly(int id, boolean[] weekly){
         return new SQL().changeData("update weekly set monday=?, tuesday=?, wednesday=?, thursday=?, friday=? where courseid=?",(weekly[0]) ? 1:0, (weekly[1]) ? 1:0, (weekly[2]) ? 1:0, (weekly[3]) ? 1:0, (weekly[4]) ? 1:0,id);
+    }
+
+    public static boolean setGrade(int id, String grade){
+        return new SQL().changeData("update courses set grade=? where id=?", grade,id);
     }
 
 }
