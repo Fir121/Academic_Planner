@@ -26,7 +26,7 @@ public class CalendarEvents {
     }
     private ArrayList<Event> getEvents(int year, int month){
         ArrayList<Event> al = new ArrayList<>();
-        ResultSet rs = new SQL().selectData("select * from events where date like '"+year+"/"+month+"/%'");
+        ResultSet rs = new SQL().selectData("select * from events where date like '"+year+"/"+String.format("%02d",month)+"/%'");
         try{
             while (rs.next()){
                 al.add(new Event(rs.getInt("id"), rs.getString("name"), rs.getString("category"), DateAlternate.date(rs.getString("date")), (rs.getInt("reminder") == 1)?true:false));

@@ -20,6 +20,10 @@ public class DateAlternate {
         LocalDate date = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return date.getYear();
     }
+    public static int getMonth(Date d){
+        LocalDate date = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return date.getMonthValue();
+    }
 
     public static String getString(Date d){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd"); 

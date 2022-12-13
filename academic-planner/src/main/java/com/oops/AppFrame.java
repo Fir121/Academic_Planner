@@ -618,6 +618,7 @@ class CourseComponentPanel extends AppFrame{
 				result.setRows(10);
 				result.setColumns(1);
 				result.setLineWrap(true);
+				result.setEditable(false);
 				JButton calculate = new JButton("Generate Range");
 				calculate.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent e){
@@ -675,6 +676,10 @@ class CalendarPanel extends AppFrame{
 	JPanel calendarPanel;
 
 	public CalendarPanel(){
+		this(null,null);
+	}
+	public CalendarPanel(Integer year, Integer month){
+		
 		calendarPanel = new JPanel();
         mainFrame.setContentPane(calendarPanel);
 
@@ -707,41 +712,7 @@ class CalendarPanel extends AppFrame{
 		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pos.gridx = 1;
 		gbc_pos.gridy = 1;
-		calendarPanel.add(new CalendarDatesPanel(false,null), gbc_pos);
-
-		// put buttons below
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		JButton but = new JButton();
-		but.setText("Add Event");
-		but.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JTextField eventName = new JTextField();
-				JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
-				JDateChooser eventDate = new JDateChooser();
-				JRadioButton remind = new JRadioButton("Reminder?");
-				Object[] message = {
-					"Event Name:", eventName,
-					"Event Category:", eventCategory,
-					"Event Date:",eventDate, 
-					remind
-				};
-
-				int option = JOptionPane.showConfirmDialog(null, message, "Add Event", JOptionPane.OK_CANCEL_OPTION);
-				if (option == JOptionPane.OK_OPTION) {
-					if (CalendarEvents.addEvent(eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
-						new CalendarPanel();
-					}
-				}
-			}
-		});
-		panel.add(but);
-
-		GridBagConstraints gbc_pos_2 = new GridBagConstraints();
-		gbc_pos_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_pos_2.gridx = 1;
-		gbc_pos_2.gridy = 2;
-		calendarPanel.add(panel, gbc_pos_2);
+		calendarPanel.add(new CalendarDatesPanel(false,null,year, month), gbc_pos);
 
 		refresh();
 	}
@@ -869,7 +840,6 @@ class MarkAttendancePanel extends AppFrame{
 		}});
 		pane.add(btnNewButton1);
 
-		// put cal panel on top
 		GridBagConstraints gbc_pos = new GridBagConstraints();
 		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pos.gridx = 1;

@@ -4,7 +4,7 @@ import java.util.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-// TODO ADD ATTENDANCE CALCULATION FUNCTIONS
+
 class SpecialClass{
     Date date;
     Boolean status;
@@ -98,6 +98,9 @@ public class Attendances {
     }
     
     public Attendance getAttendance(Integer courseid){
+        if (courseid == null){
+            return null;
+        }
         for (Attendance attendance: attendances){
             if (attendance.courseid == courseid){
                 return attendance;

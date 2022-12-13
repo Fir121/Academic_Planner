@@ -20,9 +20,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
 
     ArrayList<JPanel> panels = new ArrayList<>();
 
-    public CalendarDatesPanel(boolean attendance, Integer courseid){
-        this(attendance, courseid, null, null);
-    }
     public CalendarDatesPanel(boolean attendance, Integer courseid, Integer cur_year, Integer cur_month){
         this.attendance = attendance;
         this.courseid = courseid;
@@ -80,6 +77,8 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
 		add(timeHeader, gbc_lblNewLabel_8);
 
         int day = 0;
+        final Integer cyear = cur_year;
+        final Integer cmonth = cur_month;
 
         for (int i=0;i<dateArray.length;i++){
             for (int j=0;j<dateArray[i].length;j++){
@@ -117,50 +116,64 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 panel.add(verticalBox, gbc_panel_vbx);
                 
                 int statusClass = 0;
-                if(attendance){
+                if (!((DateAlternate.date(cur_year+"/"+cur_month+"/"+day).after(Constants.START) || DateAlternate.date(cur_year+"/"+cur_month+"/"+day).equals(Constants.START)) && (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).before(Constants.END) || DateAlternate.date(cur_year+"/"+cur_month+"/"+day).equals(Constants.END)))){
+                    // DO NOTHING SINCE NOT WITHIN SEM RANGE
+                }
+                else if(attendance){
                     SpecialClass sc = Attendances.getSpecial(courseid, DateAlternate.date(cur_year+"/"+cur_month+"/"+day));
 
                     boolean flag = false;
                     for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                         if (ex.category.equals("Holiday")){
                             flag = true;
+                            JLabel event = new JLabel(ex.eventName);
+                            verticalBox.add(event);
+                        }
+                        else if (ex.category.equals("Component")){
+                            flag = true;
+                            JLabel event = new JLabel(ex.eventName);
+                            verticalBox.add(event);
                         }
                     }
-                    final int cyear = cur_year;
-                    final int cmonth = cur_month;
 
-                    if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0 && ((sc != null && sc.status) || (sc == null && Attendances.compareDateToWeekArray(DateAlternate.date(cur_year+"/"+cur_month+"/"+day), attendanceob.weekly) && !flag))){
+                    if (((sc != null && sc.status) || (sc == null && Attendances.compareDateToWeekArray(DateAlternate.date(cur_year+"/"+cur_month+"/"+day), attendanceob.weekly) && !flag))){
                         statusClass = 1;
-                        JRadioButton absence = new JRadioButton("Present");
-                        if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
-                            absence.setSelected(true);
+                        if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0){
+                            JRadioButton absence = new JRadioButton("Present");
+                            if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
+                                absence.setSelected(true);
+                            }
+                            absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
+                            absence.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
+                                        new MarkAttendancePanel(courseid, cyear, cmonth);
+                                    }
+                                }
+                            });
+                            verticalBox.add(absence);
                         }
-                        absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
-                        absence.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                if (Attendances.toggleAttendance(courseid,DateAlternate.date((String)((JRadioButton)e.getSource()).getClientProperty( "date" )))){
-                                    new MarkAttendancePanel(courseid, cyear, cmonth);
-                                }
-                            }
-                        });
-                        verticalBox.add(absence);
+                        else{
+                            JLabel class_ = new JLabel("Class Today");
+                            verticalBox.add(class_);
+                        }
+                        
                     }
-                
-                    if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0){
-                        JButton toggle = new JButton("Toggle Class");
-                        toggle.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
-                        toggle.putClientProperty("status", statusClass);
-                        toggle.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                if (Attendances.toggleSpecial(courseid, DateAlternate.date((String)((JButton)e.getSource()).getClientProperty( "date" )), (Integer)((JButton)e.getSource()).getClientProperty( "status" ))){
-                                    new MarkAttendancePanel(courseid, cyear, cmonth);
-                                }
+
+                    JButton toggle = new JButton("Toggle Class");
+                    toggle.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
+                    toggle.putClientProperty("status", statusClass);
+                    toggle.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            if (Attendances.toggleSpecial(courseid, DateAlternate.date((String)((JButton)e.getSource()).getClientProperty( "date" )), (Integer)((JButton)e.getSource()).getClientProperty( "status" ))){
+                                new MarkAttendancePanel(courseid, cyear, cmonth);
                             }
-                        });
-                        verticalBox.add(toggle);
-                    }
+                        }
+                    });
+                    verticalBox.add(toggle);
                 }
                 else{
+                    System.out.println(cur_year+"/"+cur_month+"/"+day);
                     if (events.containsDate(cur_year+"/"+cur_month+"/"+day)){
                         for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                             if (ex.category.equals("Component")){
@@ -191,7 +204,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                             public void actionPerformed(ActionEvent e) {
                                                 if (CalendarEvents.deleteEvent((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
                                                     JOptionPane.getRootFrame().dispose();
-                                                    new CalendarPanel();
+                                                    new CalendarPanel(cyear, cmonth);
                                                 }
                                             }
                                         });
@@ -204,7 +217,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                         int option = JOptionPane.showConfirmDialog(null, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
                                         if (option == JOptionPane.OK_OPTION) {
                                             if (CalendarEvents.editEvent(eventDetails.id,eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
-                                                new CalendarPanel();
+                                                new CalendarPanel(cyear, cmonth);
                                             }
                                         }
                                     }
@@ -217,6 +230,57 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
 
                 panels.add(panel);
             }
+        }
+
+        if (attendance){
+            JPanel labels = new JPanel();
+            GridBagConstraints gbc_pos_1 = new GridBagConstraints();
+            gbc_pos_1.fill = GridBagConstraints.HORIZONTAL;
+            gbc_pos_1.gridx = 3;
+            gbc_pos_1.gridy = 10;
+            add(labels, gbc_pos_1);
+
+            JLabel data = new JLabel();
+            data.setText(Calculator.getAttendanceStats(courseid));
+            labels.add(data);
+
+            panels.add(labels);
+        }
+        else{
+            JPanel panel = new JPanel();
+            panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+            JButton but = new JButton();
+            but.setText("Add Event");
+            but.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JTextField eventName = new JTextField();
+                    JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
+                    JDateChooser eventDate = new JDateChooser();
+                    JRadioButton remind = new JRadioButton("Reminder?");
+                    Object[] message = {
+                        "Event Name:", eventName,
+                        "Event Category:", eventCategory,
+                        "Event Date:",eventDate, 
+                        remind
+                    };
+
+                    int option = JOptionPane.showConfirmDialog(null, message, "Add Event", JOptionPane.OK_CANCEL_OPTION);
+                    if (option == JOptionPane.OK_OPTION) {
+                        if (CalendarEvents.addEvent(eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
+                            new CalendarPanel(cyear, cmonth);
+                        }
+                    }
+                }
+            });
+            panel.add(but);
+
+            GridBagConstraints gbc_pos_2 = new GridBagConstraints();
+            gbc_pos_2.fill = GridBagConstraints.HORIZONTAL;
+            gbc_pos_2.gridx = 3;
+            gbc_pos_2.gridy = 10;
+            add(panel, gbc_pos_2);
+
+            panels.add(panel);
         }
         revalidate();
         repaint();
@@ -367,9 +431,9 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
     private void setLayoutStyle(){
         GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0,0};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0,0,0};
 		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0,1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0,1.0,1.0, Double.MIN_VALUE};
 		setLayout(gbl_contentPane);
     }
     public void actionPerformed(ActionEvent e){
