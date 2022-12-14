@@ -5,11 +5,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class Component implements Comparable<Component>{
-    int id;
-    String componentName;
-    Date componentDate;
-    double componentPercentage;
-    Double componentMarks;
+    private int id;
+    private String componentName;
+    private Date componentDate;
+    private double componentPercentage;
+    private Double componentMarks;
     public Component(int id, String componentName, Date componentDate, double componentPercentage, Double componentMarks){
         this.id = id;
         this.componentName = componentName;
@@ -17,14 +17,29 @@ class Component implements Comparable<Component>{
         this.componentPercentage = componentPercentage;
         this.componentMarks = componentMarks;
     }
+    public int getId() {
+        return id;
+    }
+    public String getComponentName() {
+        return componentName;
+    }
+    public Date getComponentDate() {
+        return componentDate;
+    }
+    public double getComponentPercentage() {
+        return componentPercentage;
+    }
+    public Double getComponentMarks() {
+        return componentMarks;
+    }
     public int compareTo(Component c){
         return componentDate.compareTo(c.componentDate);
     }
 }
 
 public class Components {
-    int courseId;
-    ArrayList<Component> components;
+    private int courseId;
+    private ArrayList<Component> components;
     public Components(int courseId){
         this.courseId = courseId;
         components = getComponents(courseId);
@@ -48,6 +63,14 @@ public class Components {
         }
         return al;
     }
+
+    public int getCourseId(){
+        return courseId;
+    }
+    public ArrayList<Component> getArrayListComponents(){
+        return components;
+    }
+
     public static boolean removeComponent(int id){
         return new SQL().changeData("delete from components where id=?",id);
     }
@@ -55,7 +78,7 @@ public class Components {
         Components all = new Components(courseId);
         double total_percentage = 0;
         for (Component c: all.components){
-            total_percentage += c.componentPercentage;
+            total_percentage += c.getComponentPercentage();
         }
         if (total_percentage+componentPercentage > 100.0){
             PopupFrame.showErrorMessage("Invalid Percentage");
@@ -65,7 +88,7 @@ public class Components {
     }
     public Component getComponent(int id){
         for (Component component: components){
-            if (component.id == id){
+            if (component.getId() == id){
                 return component;
             }
         }
@@ -75,7 +98,7 @@ public class Components {
         Components all = new Components(courseId);
         double total_percentage = 0;
         for (Component c: all.components){
-            total_percentage += c.componentPercentage;
+            total_percentage += c.getComponentPercentage();
         }
         if (total_percentage+componentPercentage > 100.0){
             PopupFrame.showErrorMessage("Invalid Percentage");
@@ -87,7 +110,7 @@ public class Components {
     public static boolean setMarks(int courseId, int id, Double marks){
         Course course = new Courses().getCourse(courseId);
         Component component = new Components(courseId).getComponent(id);
-        Double max = course.courseCredits * component.componentPercentage;
+        Double max = course.getCourseCredits() * component.getComponentPercentage();
         if (marks > max){
             PopupFrame.showErrorMessage("Invalid marks, as per credits max marks = "+max);
             return false;

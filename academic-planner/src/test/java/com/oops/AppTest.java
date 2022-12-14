@@ -20,10 +20,10 @@ public class AppTest
 
         // Check Courses class constructor
         Courses courses = new Courses();
-        assertEquals(1, courses.courses.size());
-        assertEquals("JUNIT TEST", courses.courses.get(0).courseName);
-        int id = courses.courses.get(0).id;
-        assertEquals(courses.courses.get(0), courses.getCourse(id));
+        assertEquals(1, courses.getArrayListCourses().size());
+        assertEquals("JUNIT TEST", courses.getArrayListCourses().get(0).getCourseName());
+        int id = courses.getArrayListCourses().get(0).getId();
+        assertEquals(courses.getArrayListCourses().get(0), courses.getCourse(id));
 
         // Check setCourse
         assertTrue(Courses.setCourse(id, "JUNIT TEST 2", "CS F121", 4));
@@ -35,12 +35,12 @@ public class AppTest
         // Check remove course
         assertTrue(Courses.removeCourse(id));
         courses = new Courses();
-        assertEquals(0, courses.courses.size());
+        assertEquals(0, courses.getArrayListCourses().size());
 
         // RE ADDING COURSE TO TEST COMPONENTS
         assertTrue(Courses.addCourse("JUNIT TEST", "CS F121", 4));
         courses = new Courses();
-        testComponents(courses.courses.get(0).id);
+        testComponents(courses.getArrayListCourses().get(0).getId());
     }
 
     public void testComponents(int id){
@@ -51,10 +51,10 @@ public class AppTest
 
         // Check Components class constructor
         Components components = new Components(id);
-        assertEquals(1, components.components.size());
-        assertEquals("JUNIT COMPONENT", components.components.get(0).componentName);
-        int componentid = components.components.get(0).id;
-        assertEquals(components.components.get(0), components.getComponent(componentid));
+        assertEquals(1, components.getArrayListComponents().size());
+        assertEquals("JUNIT COMPONENT", components.getArrayListComponents().get(0).getComponentName());
+        int componentid = components.getArrayListComponents().get(0).getId();
+        assertEquals(components.getArrayListComponents().get(0), components.getComponent(componentid));
 
         // Check setComponent
         assertTrue(Components.editComponent(id, componentid, "JUNIT COMPONENT 2",new Date(), 4.0));
@@ -63,7 +63,7 @@ public class AppTest
         // Check removeComponent
         assertTrue(Components.removeComponent(componentid));
         components = new Components(id);
-        assertEquals(0, components.components.size());
+        assertEquals(0, components.getArrayListComponents().size());
     }
 
     @Test

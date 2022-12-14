@@ -62,24 +62,24 @@ public class Calculator {
         if (course.grade.equals("Unknown")){
             return "<html>Please fill in your current Grade<br/>You may use the calculator below</html>";
         }
-        if (components.components.size() == 0){
+        if (components.getArrayListComponents().size() == 0){
             return "No components added!";
         }
         Double gotMarks = 0.0;
         Double totalMarks = 0.0;
-        for (Component c: components.components){
-            if (c.componentDate.compareTo(new Date()) <= 0){
-                if (c.componentMarks == null){
+        for (Component c: components.getArrayListComponents()){
+            if (c.getComponentDate().compareTo(new Date()) <= 0){
+                if (c.getComponentMarks() == null){
                     return "<html>Please fill in all possible marks<br/>before we can estimate a grade!</html>";
                 }
-                gotMarks += c.componentMarks;
-                totalMarks += c.componentPercentage*course.courseCredits;
+                gotMarks += c.getComponentMarks();
+                totalMarks += c.getComponentPercentage()*course.getCourseCredits();
             }
         }
         Double avg = getAverage(course.grade, gotMarks);
 
         // ATTENDANCE DATA TILL LAST COMPONENT
-        HashMap<String,Double> dataComponent = generateAttendanceReport(courseId, components.components.get(components.components.size()-1).componentDate);
+        HashMap<String,Double> dataComponent = generateAttendanceReport(courseId, components.getArrayListComponents().get(components.getArrayListComponents().size()-1).getComponentDate());
         Double attendedClassesComponent = dataComponent.get("attended");
         Double totalClassesToDateComponent = dataComponent.get("tilldate");
         Double attPercentageComponent = attendedClassesComponent/totalClassesToDateComponent;
@@ -117,14 +117,14 @@ public class Calculator {
                 events = new CalendarEvents(year, month);
             }
             boolean flag = false;
-            for (int i=0; i<attendance.specialClasses.size();i++){
-                if (attendance.specialClasses.get(i).date.equals(date)){
+            for (int i=0; i<attendance.getSpecialClasses().size();i++){
+                if (attendance.getSpecialClasses().get(i).getDate().equals(date)){
                     flag = true;
-                    if (attendance.specialClasses.get(i).status){
+                    if (attendance.getSpecialClasses().get(i).getStatus()){
                         totalClasses++;
                         if (date.before(new Date()) || date.equals(new Date())){
                             totalClassesToDate++;
-                            if (!attendance.absences.contains(date)){
+                            if (!attendance.getAbsences().contains(date)){
                                 attendedClasses++;
                             }
                         }
@@ -134,19 +134,19 @@ public class Calculator {
             if (!flag){
                 boolean notworking = false;
                 for (Event ex: events.getEventsOnDate(DateAlternate.getString(date))){
-                    if (ex.category.equals("Holiday")){
+                    if (ex.getCategory().equals("Holiday")){
                         notworking = true;break;
                     }
-                    else if (ex.category.equals("Component")){
+                    else if (ex.getCategory().equals("Component")){
                         notworking = true;break;
                     }
                 }
 
-                if (Attendances.compareDateToWeekArray(date, attendance.weekly) && !notworking){
+                if (Attendances.compareDateToWeekArray(date, attendance.getWeekly()) && !notworking){
                     totalClasses++;
                     if (date.before(new Date()) || date.equals(new Date())){
                         totalClassesToDate++;
-                        if (!attendance.absences.contains(date)){
+                        if (!attendance.getAbsences().contains(date)){
                             attendedClasses++;
                         }
                     }

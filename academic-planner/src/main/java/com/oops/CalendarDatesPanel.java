@@ -132,23 +132,23 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
 
                     boolean flag = false;
                     for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
-                        if (ex.category.equals("Holiday")){
+                        if (ex.getCategory().equals("Holiday")){
                             flag = true;
-                            JLabel event = new JLabel(ex.eventName);
+                            JLabel event = new JLabel(ex.getEventName());
                             verticalBox.add(event);
                         }
-                        else if (ex.category.equals("Component")){
+                        else if (ex.getCategory().equals("Component")){
                             flag = true;
-                            JLabel event = new JLabel(ex.eventName);
+                            JLabel event = new JLabel(ex.getEventName());
                             verticalBox.add(event);
                         }
                     }
 
-                    if (((sc != null && sc.status) || (sc == null && Attendances.compareDateToWeekArray(DateAlternate.date(cur_year+"/"+cur_month+"/"+day), attendanceob.weekly) && !flag))){
+                    if (((sc != null && sc.getStatus()) || (sc == null && Attendances.compareDateToWeekArray(DateAlternate.date(cur_year+"/"+cur_month+"/"+day), attendanceob.getWeekly()) && !flag))){
                         statusClass = 1;
                         if (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).compareTo(new Date()) <= 0){
                             JRadioButton absence = new JRadioButton("Present");
-                            if (!attendanceob.absences.contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
+                            if (!attendanceob.getAbsences().contains(DateAlternate.date(cur_year+"/"+cur_month+"/"+day))){
                                 absence.setSelected(true);
                             }
                             absence.putClientProperty("date", cur_year+"/"+cur_month+"/"+day);
@@ -183,37 +183,37 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 else{
                     if (events.containsDate(cur_year+"/"+cur_month+"/"+day)){
                         for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
-                            if (ex.category.equals("Component")){
+                            if (ex.getCategory().equals("Component")){
                                 JLabel event_l = new JLabel();
-                                event_l.setText(ex.eventName);
+                                event_l.setText(ex.getEventName());
                                 verticalBox.add(event_l);
                             }
                             else{
                                 JButton event_x = new JButton();
-                                switch (ex.category){
+                                switch (ex.getCategory()){
                                     case "Holiday":event_x.setBackground(Color.MAGENTA);event_x.setForeground(Color.MAGENTA);break;
                                     case "Event":event_x.setBackground(Color.BLUE);event_x.setForeground(Color.BLUE);break;
                                 }
                                 event_x.setToolTipText("Click to delete/edit event");
-                                event_x.setText(ex.eventName);
-                                event_x.putClientProperty("eventid", ex.id);
+                                event_x.setText(ex.getEventName());
+                                event_x.putClientProperty("eventid", ex.getId());
                                 event_x.addActionListener(new ActionListener() {
                                     public void actionPerformed(ActionEvent e) {
                                         int eventId = (Integer)((JButton)e.getSource()).getClientProperty( "eventid" );
                                         Event eventDetails = events.getEvent(eventId);
                                         JTextField eventName = new JTextField();
-                                        eventName.setText(eventDetails.eventName);
+                                        eventName.setText(eventDetails.getEventName());
                                         JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
-                                        eventCategory.setSelectedItem(eventDetails.category);
+                                        eventCategory.setSelectedItem(eventDetails.getCategory());
                                         JDateChooser eventDate = new JDateChooser();
                                         eventDate.setMinSelectableDate(Constants.START);
 					                    eventDate.setMaxSelectableDate(Constants.END);
-                                        eventDate.setDate(eventDetails.date);
+                                        eventDate.setDate(eventDetails.getDate());
                                         JRadioButton remind = new JRadioButton("Reminder?");
-                                        remind.setSelected(eventDetails.reminder);
+                                        remind.setSelected(eventDetails.getReminder());
 
                                         JButton deleteButton = new JButton("Delete Event?");
-                                        deleteButton.putClientProperty( "id", eventDetails.id);
+                                        deleteButton.putClientProperty( "id", eventDetails.getId());
                                         deleteButton.addActionListener(new ActionListener() {
                                             public void actionPerformed(ActionEvent e) {
                                                 if (CalendarEvents.deleteEvent((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
@@ -233,7 +233,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                         };
                                         int option = JOptionPane.showConfirmDialog(mainFrame, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
                                         if (option == JOptionPane.OK_OPTION) {
-                                            if (CalendarEvents.editEvent(eventDetails.id,eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
+                                            if (CalendarEvents.editEvent(eventDetails.getId(),eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
                                                 new CalendarPanel(cyear, cmonth);
                                             }
                                         }

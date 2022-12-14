@@ -6,20 +6,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class SpecialClass{
-    Date date;
-    Boolean status;
+    private Date date;
+    private Boolean status;
     public SpecialClass(Date date, Boolean status){
         this.date = date;
         this.status = status;
     }
+    public Date getDate() {
+        return date;
+    }
+    public Boolean getStatus() {
+        return status;
+    }
 }
 class Attendance{
-    int courseid;
-    String course;
-    boolean hasWeekly;
-    boolean[] weekly = new boolean[5];
-    ArrayList<Date> absences = new ArrayList<>();
-    ArrayList<SpecialClass> specialClasses = new ArrayList<>(); 
+    private int courseid;
+    private String course;
+    private boolean hasWeekly;
+    private boolean[] weekly = new boolean[5];
+    private ArrayList<Date> absences = new ArrayList<>();
+    private ArrayList<SpecialClass> specialClasses = new ArrayList<>(); 
     public Attendance(int courseid, String course){
         hasWeekly = false;
         this.courseid = courseid;
@@ -33,31 +39,55 @@ class Attendance{
         this.absences = absences;
         this.specialClasses = specialClasses;
     }
+    public int getCourseid() {
+        return courseid;
+    }
+    public String getCourse() {
+        return course;
+    }
+    public boolean isHasWeekly() {
+        return hasWeekly;
+    }
+    public boolean[] getWeekly() {
+        return weekly;
+    }
+    public ArrayList<Date> getAbsences() {
+        return absences;
+    }
+    public ArrayList<SpecialClass> getSpecialClasses() {
+        return specialClasses;
+    }
+    
 }
 public class Attendances {
-    ArrayList<Attendance> attendances;
+    private ArrayList<Attendance> attendances;
     public Attendances(){
         attendances = getAttendances();
     }
     private ArrayList<Attendance> getAttendances(){
         ArrayList<Attendance> al = new ArrayList<>();
         Courses courses = new Courses();
-        for (Course c: courses.courses){
-            boolean[] tempWeekly = Courses.getWeekly(c.id);
+        for (Course c: courses.getArrayListCourses()){
+            boolean[] tempWeekly = Courses.getWeekly(c.getId());
             boolean flag = false;
             for (int i=0; i<tempWeekly.length; i++){
                 if (tempWeekly[i]){
-                    al.add(new Attendance(c.id, c.toString(), tempWeekly, getAbsences(c.id), getSpecialClasses(c.id)));
+                    al.add(new Attendance(c.getId(), c.toString(), tempWeekly, getAbsences(c.getId()), getSpecialClasses(c.getId())));
                     flag = true;
                     break;
                 }
             }
             if (!flag){
-                al.add(new Attendance(c.id, c.toString()));
+                al.add(new Attendance(c.getId(), c.toString()));
             }
         }
         return al;
     }
+
+    public ArrayList<Attendance> getArrayListAttendances(){
+        return attendances;
+    }
+
     private static ArrayList<Date> getAbsences(int id){
         ArrayList<Date> al = new ArrayList<>();
         ResultSet rs = new SQL().selectData("select * from absences where courseid="+id);
@@ -90,7 +120,7 @@ public class Attendances {
     public static SpecialClass getSpecial(Integer courseid, Date dt){
         ArrayList<SpecialClass> al = getSpecialClasses(courseid);
         for (SpecialClass sc: al){
-            if (sc.date.equals(dt)){
+            if (sc.getDate().equals(dt)){
                 return sc;
             }
         }
@@ -102,7 +132,7 @@ public class Attendances {
             return null;
         }
         for (Attendance attendance: attendances){
-            if (attendance.courseid == courseid){
+            if (attendance.getCourseid() == courseid){
                 return attendance;
             }
         }
@@ -112,7 +142,7 @@ public class Attendances {
     public static boolean toggleSpecial(int courseid, Date dt, int status){
         SpecialClass scob = getSpecial(courseid, dt); 
         if (scob != null){
-            if (scob.status){
+            if (scob.getStatus()){
                 return new SQL().changeData("update specialclasses set active=0 where courseid=? and date=?", courseid, DateAlternate.getString(dt));
             }
             else{

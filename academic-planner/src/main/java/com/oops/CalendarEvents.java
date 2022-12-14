@@ -5,11 +5,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class Event{
-    Integer id;
-    String eventName;
-    String category;
-    Date date;
-    Boolean reminder;
+    private Integer id;
+    private String eventName;
+    private String category;
+    private Date date;
+    private Boolean reminder;
     public Event(Integer id, String eventName, String category, Date date, Boolean reminder){
         this.id = id;
         this.eventName = eventName;
@@ -17,10 +17,25 @@ class Event{
         this.date = date;
         this.reminder = reminder;
     }
+    public Integer getId() {
+        return id;
+    }
+    public String getEventName() {
+        return eventName;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public Date getDate() {
+        return date;
+    }
+    public Boolean getReminder() {
+        return reminder;
+    }
 }
 
 public class CalendarEvents {
-    ArrayList<Event> events;
+    private ArrayList<Event> events;
     public CalendarEvents(int year, int month){
         events = getEvents(year,month);
     }
@@ -49,6 +64,9 @@ public class CalendarEvents {
         return al;
     }
     
+    public ArrayList<Event> getArrayListEvents(){
+        return events;
+    }
     public static boolean addEvent(String name, String category, Date date, boolean remind){
         return new SQL().changeData("insert into events('name', 'category', 'date', 'reminder') values(?,?,?,?)",name,category,DateAlternate.getString(date),(remind)?1:0);
     }
@@ -63,7 +81,7 @@ public class CalendarEvents {
 
     public Event getEvent(int id){
         for (Event event: events){
-            if (event.id == id){
+            if (event.getId() == id){
                 return event;
             }
         }
@@ -73,7 +91,7 @@ public class CalendarEvents {
     public boolean containsDate(String date){
         Date dt =  DateAlternate.date(date);
         for (Event event: events){
-            if (event.date.equals(dt)){
+            if (event.getDate().equals(dt)){
                 return true;
             }
         }
@@ -84,7 +102,7 @@ public class CalendarEvents {
         ArrayList<Event> al = new ArrayList<>();
         Date dt =  DateAlternate.date(date);
         for (Event event: events){
-            if (event.date.equals(dt)){
+            if (event.getDate().equals(dt)){
                 al.add(event);
             }
         }
