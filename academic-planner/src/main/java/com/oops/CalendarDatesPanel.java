@@ -15,15 +15,15 @@ import java.time.temporal.TemporalAdjusters;
 import java.awt.event.*;
 
 public class CalendarDatesPanel extends JPanel implements ActionListener{
-    int cur_year;
-    int cur_month;
-    JLabel timeHeader;
-    CalendarEvents events;
-    boolean attendance;
-    Integer courseid;
-    JFrame mainFrame;
+    private int cur_year;
+    private int cur_month;
+    private JLabel timeHeader;
+    private CalendarEvents events;
+    private boolean attendance;
+    private Integer courseid;
+    private JFrame mainFrame;
 
-    ArrayList<JPanel> panels = new ArrayList<>();
+    private ArrayList<JPanel> panels = new ArrayList<>();
 
     public CalendarDatesPanel(JFrame fr, boolean attendance, Integer courseid, Integer cur_year, Integer cur_month){
         mainFrame = fr;
