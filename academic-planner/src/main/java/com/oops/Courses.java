@@ -65,7 +65,14 @@ public class Courses {
         return false;
     }
     public static boolean setCourse(int id, String courseName, String courseCode, Integer courseCredits){
-        return new SQL().changeData("update courses set name=?, code=?, credits=? where id=?",courseName,courseCode,courseCredits,id);
+        Course c = new Courses().getCourse(id);
+        SQL sql = new SQL();
+        if (sql.changeData("update components set marks=(marks/?)*? where id=? and marks is not null",c.courseCredits,courseCredits,id)){
+            PopupFrame.showErrorMessage("Warning: This change may have affected previously set marks in components, if any.");
+            SQL.initiateConnection();
+            return new SQL().changeData("update courses set name=?, code=?, credits=? where id=?",courseName,courseCode,courseCredits,id);
+        }
+        return false;
     }
     public static boolean[] getWeekly(int id){
         boolean[] weekly = new boolean[]{false,false,false,false,false};

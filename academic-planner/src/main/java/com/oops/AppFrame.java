@@ -355,7 +355,7 @@ class CoursePanel extends AppFrame{
 					Object[] message = {
 						j1,j2,j3,j4,j5
 					};
-					int option = JOptionPane.showConfirmDialog(null, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
+					int option = JOptionPane.showConfirmDialog(mainFrame, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
 						if (Courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
 							new CoursePanel();
@@ -403,7 +403,7 @@ class CoursePanel extends AppFrame{
 						"Course Credits:",courseCredits
 					};
 
-					int option = JOptionPane.showConfirmDialog(null, message, "Edit Course", JOptionPane.OK_CANCEL_OPTION);
+					int option = JOptionPane.showConfirmDialog(mainFrame, message, "Edit Course", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
 						if (Courses.setCourse(id, courseName.getText(), courseCode.getText(), (Integer)courseCredits.getValue())){
 							new CoursePanel();
@@ -431,7 +431,7 @@ class CoursePanel extends AppFrame{
 					"Course Credits:",courseCredits
 				};
 
-				int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
+				int option = JOptionPane.showConfirmDialog(mainFrame, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
 					if (Courses.addCourse(courseName.getText(), courseCode.getText(), (Integer)courseCredits.getValue())){
 						new CoursePanel();
@@ -547,6 +547,8 @@ class CourseComponentPanel extends AppFrame{
 					componentName.setText(componentDetails.componentName);
 
 					JDateChooser  componentDate = new JDateChooser();
+					componentDate.setMinSelectableDate(Constants.START);
+					componentDate.setMaxSelectableDate(Constants.END);
 					componentDate.setDate(componentDetails.componentDate);
 
 					JTextField componentPercentage = new JTextField();
@@ -558,7 +560,7 @@ class CourseComponentPanel extends AppFrame{
 						"Component Percentage:",componentPercentage
 					};
 
-					int option = JOptionPane.showConfirmDialog(null, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
+					int option = JOptionPane.showConfirmDialog(mainFrame, message, "Add Course", JOptionPane.OK_CANCEL_OPTION);
 					if (option == JOptionPane.OK_OPTION) {
 						try{
 							Double percentage = Double.valueOf(componentPercentage.getText());
@@ -590,7 +592,7 @@ class CourseComponentPanel extends AppFrame{
 							"Marks", componentMarks
 						};
 
-						int option = JOptionPane.showConfirmDialog(null, message, "Set Marks", JOptionPane.OK_CANCEL_OPTION);
+						int option = JOptionPane.showConfirmDialog(mainFrame, message, "Set Marks", JOptionPane.OK_CANCEL_OPTION);
 						if (option == JOptionPane.OK_OPTION) {
 							try{
 								Double marks = Double.valueOf(componentMarks.getText());
@@ -614,17 +616,15 @@ class CourseComponentPanel extends AppFrame{
 		calcGrade.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				final JTextField average = new JTextField();
-				final JTextArea result = new JTextArea();
-				result.setRows(10);
-				result.setColumns(1);
-				result.setLineWrap(true);
-				result.setEditable(false);
-				JButton calculate = new JButton("Generate Range");
+				final JTextField marks = new JTextField();
+				final JLabel result = new JLabel();
+				JButton calculate = new JButton("Generate Grade");
 				calculate.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent e){
 						try{
 							Double avg = Double.parseDouble(average.getText());
-							result.setText(Calculator.calculateRange(avg));
+							Double mrks = Double.parseDouble(marks.getText());
+							result.setText(Calculator.calculateRange(avg, mrks));
 						}
 						catch(NumberFormatException Exc){
 							PopupFrame.showErrorMessage("Invalid Number input");
@@ -633,10 +633,12 @@ class CourseComponentPanel extends AppFrame{
 				});
 
 				Object[] message = {
-					"Enter current class average: ", average,result,calculate
+					"Enter current class average: ", average,
+					"Enter your marks: ",marks,					
+					result,calculate
 				};
 
-				JOptionPane.showConfirmDialog(null, message, "Calculate Grade", JOptionPane.CANCEL_OPTION);
+				JOptionPane.showConfirmDialog(mainFrame, message, "Calculate Grade", JOptionPane.CANCEL_OPTION);
 			}
 		});
 		lowerPanel.add(calcGrade);
@@ -650,7 +652,8 @@ class CourseComponentPanel extends AppFrame{
 				JTextField componentName = new JTextField();
 
 				JDateChooser  componentDate = new JDateChooser();
-
+				componentDate.setMinSelectableDate(Constants.START);
+				componentDate.setMaxSelectableDate(Constants.END);
 
 				JTextField componentPercentage = new JTextField();
 				Object[] message = {
@@ -659,7 +662,7 @@ class CourseComponentPanel extends AppFrame{
 					"Component Percentage:",componentPercentage
 				};
 
-				int option = JOptionPane.showConfirmDialog(null, message, "Add Component", JOptionPane.OK_CANCEL_OPTION);
+				int option = JOptionPane.showConfirmDialog(mainFrame, message, "Add Component", JOptionPane.OK_CANCEL_OPTION);
 				if (option == JOptionPane.OK_OPTION) {
 					if (Components.addComponent(components.courseId, componentName.getText(), componentDate.getDate(), Double.parseDouble(componentPercentage.getText()))){
 						new CourseComponentPanel(components.courseId);
@@ -712,7 +715,7 @@ class CalendarPanel extends AppFrame{
 		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pos.gridx = 1;
 		gbc_pos.gridy = 1;
-		calendarPanel.add(new CalendarDatesPanel(false,null,year, month), gbc_pos);
+		calendarPanel.add(new CalendarDatesPanel(mainFrame, false,null,year, month), gbc_pos);
 
 		refresh();
 	}
@@ -780,7 +783,7 @@ class AttendancePanel extends AppFrame{
 						Object[] message = {
 							j1,j2,j3,j4,j5
 						};
-						int option = JOptionPane.showConfirmDialog(null, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
+						int option = JOptionPane.showConfirmDialog(mainFrame, message, "Set Weekly Schedule", JOptionPane.OK_CANCEL_OPTION);
 						if (option == JOptionPane.OK_OPTION) {
 							if (Courses.setWeekly(id, new boolean[]{j1.isSelected(),j2.isSelected(),j3.isSelected(),j4.isSelected(),j5.isSelected()})){
 								new AttendancePanel();
@@ -844,7 +847,7 @@ class MarkAttendancePanel extends AppFrame{
 		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
 		gbc_pos.gridx = 1;
 		gbc_pos.gridy = 1;
-		markAttendancePanel.add(new CalendarDatesPanel(true,courseid,cur_year,cur_month), gbc_pos);
+		markAttendancePanel.add(new CalendarDatesPanel(mainFrame,true,courseid,cur_year,cur_month), gbc_pos);
 
 		refresh();
 	}

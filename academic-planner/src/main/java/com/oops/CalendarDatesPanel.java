@@ -17,10 +17,13 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
     CalendarEvents events;
     boolean attendance;
     Integer courseid;
+    JFrame mainFrame;
 
     ArrayList<JPanel> panels = new ArrayList<>();
 
-    public CalendarDatesPanel(boolean attendance, Integer courseid, Integer cur_year, Integer cur_month){
+    public CalendarDatesPanel(JFrame fr, boolean attendance, Integer courseid, Integer cur_year, Integer cur_month){
+        mainFrame = fr;
+
         this.attendance = attendance;
         this.courseid = courseid;
         LocalDate today = LocalDate.now();
@@ -194,6 +197,8 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                         JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
                                         eventCategory.setSelectedItem(eventDetails.category);
                                         JDateChooser eventDate = new JDateChooser();
+                                        eventDate.setMinSelectableDate(Constants.START);
+					                    eventDate.setMaxSelectableDate(Constants.END);
                                         eventDate.setDate(eventDetails.date);
                                         JRadioButton remind = new JRadioButton("Reminder?");
                                         remind.setSelected(eventDetails.reminder);
@@ -214,7 +219,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                             "Event Date:",eventDate, 
                                             remind, deleteButton
                                         };
-                                        int option = JOptionPane.showConfirmDialog(null, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
+                                        int option = JOptionPane.showConfirmDialog(mainFrame, message, "Edit Event", JOptionPane.OK_CANCEL_OPTION);
                                         if (option == JOptionPane.OK_OPTION) {
                                             if (CalendarEvents.editEvent(eventDetails.id,eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
                                                 new CalendarPanel(cyear, cmonth);
@@ -256,6 +261,8 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                     JTextField eventName = new JTextField();
                     JComboBox<String>  eventCategory = new JComboBox<>(Constants.CATEGORIES);
                     JDateChooser eventDate = new JDateChooser();
+                    eventDate.setMinSelectableDate(Constants.START);
+					eventDate.setMaxSelectableDate(Constants.END);
                     JRadioButton remind = new JRadioButton("Reminder?");
                     Object[] message = {
                         "Event Name:", eventName,
@@ -264,7 +271,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                         remind
                     };
 
-                    int option = JOptionPane.showConfirmDialog(null, message, "Add Event", JOptionPane.OK_CANCEL_OPTION);
+                    int option = JOptionPane.showConfirmDialog(mainFrame, message, "Add Event", JOptionPane.OK_CANCEL_OPTION);
                     if (option == JOptionPane.OK_OPTION) {
                         if (CalendarEvents.addEvent(eventName.getText(), String.valueOf(eventCategory.getSelectedItem()), eventDate.getDate(), remind.isSelected())){
                             new CalendarPanel(cyear, cmonth);

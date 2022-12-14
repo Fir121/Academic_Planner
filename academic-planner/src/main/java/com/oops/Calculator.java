@@ -1,21 +1,44 @@
 package com.oops;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Calculator {
-    public static String calculateRange(Double avg){
-        return "A > "+String.format("%.2f",avg*1.8)+"\n"+
-        "A- > "+String.format("%.2f",avg*1.5)+"\n"+
-        "B > "+String.format("%.2f",avg*1.25)+"\n"+
-        "B- > "+String.format("%.2f",avg)+"\n"+
-        "C > "+String.format("%.2f",avg*0.8)+"\n"+
-        "C- > "+String.format("%.2f",avg*0.7)+"\n"+
-        "D > "+String.format("%.2f",avg*0.6)+"\n"+
-        "D- > "+String.format("%.2f",avg*0.5)+"\n"+
-        "E > "+String.format("%.2f",avg*0.4)+"\n"+
-        "E- > "+String.format("%.2f",avg*0.3);
+    public static String calculateRange(Double avg, Double marks){
+        if (marks >= avg*1.8){
+            return "A";
+        }
+        else if (marks >= avg*1.5){
+            return "A-";
+        }
+        else if (marks >= avg*1.25){
+            return "B";
+        }
+        else if (marks >= avg){
+            return "B-";
+        }
+        else if (marks >= avg*0.8){
+            return "C";
+        }
+        else if (marks >= avg*0.7){
+            return "C-";
+        }
+        else if (marks >= avg*0.6){
+            return "D";
+        }
+        else if (marks >= avg*0.5){
+            return "D-";
+        }
+        else if (marks >= avg*0.4){
+            return "E";
+        }
+        else if (marks >= avg*0.3){
+            return "E-";
+        }
+        else{
+            return "F";
+        }
     }
     private static Double getAverage(String grade, Double marks){
         switch(grade){
@@ -32,17 +55,21 @@ public class Calculator {
             default: return 0.0;
         }
     }
-    public static String getPredicted(int courseId){
+    public static String getPredicted(int courseId){ // ROUGH ALGORITHM THAT CALCULATES A PREDICTED GRADE BASED ON ATTENDANCE, MORE RELIABLE AFTER ADDING MORE DATA!
         Course course = new Courses().getCourse(courseId);
         Components components = new Components(courseId);
 
         if (course.grade.equals("Unknown")){
             return "<html>Please fill in your current Grade<br/>You may use the calculator below</html>";
         }
+        if (components.components.size() == 0){
+            return "No components added!";
+        }
         Double gotMarks = 0.0;
         Double totalMarks = 0.0;
         for (Component c: components.components){
             if (c.componentDate.compareTo(new Date()) <= 0){
+                System.out.println(c.componentName+" "+c.componentMarks);
                 if (c.componentMarks == null){
                     return "<html>Please fill in all possible marks<br/>before we can estimate a grade!</html>";
                 }
@@ -51,10 +78,30 @@ public class Calculator {
             }
         }
         Double avg = getAverage(course.grade, gotMarks);
-        return "X";
+
+        // ATTENDANCE DATA TILL LAST COMPONENT
+        HashMap<String,Double> dataComponent = generateAttendanceReport(courseId, components.components.get(components.components.size()-1).componentDate);
+        Double attendedClassesComponent = dataComponent.get("attended");
+        Double totalClassesToDateComponent = dataComponent.get("tilldate");
+        Double attPercentageComponent = attendedClassesComponent/totalClassesToDateComponent;
+
+        // ATTENDANCE DATA TILL TODAY
+        HashMap<String,Double> data = generateAttendanceReport(courseId, new Date());
+        Double attendedClasses = data.get("attended");
+        Double totalClassesToDate = data.get("tilldate");
+        Double attPercentage = attendedClasses/totalClassesToDate;
+
+        Double extrapolatedClassMarks = (avg/totalMarks)*100;
+        Double yourExtrapolatedMarks = (((gotMarks/attPercentageComponent)*attPercentage)/totalMarks)*100;
+
+        System.out.println(extrapolatedClassMarks);
+        System.out.println(yourExtrapolatedMarks);
+        return calculateRange(extrapolatedClassMarks, yourExtrapolatedMarks);
     }
 
-    public static String getAttendanceStats(int courseId){
+    private static HashMap<String,Double> generateAttendanceReport(int courseId, Date finalDate){
+        HashMap<String,Double> data = new HashMap<>();
+
         Double attendedClasses = 0.0;
         Double totalClassesToDate = 0.0;
         Double totalClasses = 0.0;
@@ -64,7 +111,9 @@ public class Calculator {
         int month = DateAlternate.getMonth(Constants.START);
         CalendarEvents events = new CalendarEvents(year, month);
 
-        for (Date date = Constants.START; date.before(Constants.END); date = Date.from(date.toInstant().plus(1,ChronoUnit.DAYS))) {
+        Date end = (finalDate == null)?Constants.END : finalDate;
+
+        for (Date date = Constants.START; date.before(end) || date.equals(end); date = Date.from(date.toInstant().plus(1,ChronoUnit.DAYS))) {
             if (DateAlternate.getYear(date) != year || DateAlternate.getMonth(date) != month){
                 year = DateAlternate.getYear(date);
                 month = DateAlternate.getMonth(date);
@@ -107,6 +156,19 @@ public class Calculator {
                 }
             }
         }
+
+        data.put("attended",attendedClasses);
+        data.put("tilldate", totalClassesToDate);
+        data.put("total",totalClasses);
+
+        return data;
+    }
+
+    public static String getAttendanceStats(int courseId){
+        HashMap<String,Double> data = generateAttendanceReport(courseId, null);
+        Double attendedClasses = data.get("attended");
+        Double totalClassesToDate = data.get("tilldate");
+        Double totalClasses = data.get("total");
         try{
             return "<html>Attended Classes: "+attendedClasses+
             "<br/>Classes To Date: "+totalClassesToDate+
@@ -116,7 +178,7 @@ public class Calculator {
             "<br/>End Of Sem Attendance: "+String.format("%.2f", (attendedClasses/totalClasses)*100)+"%</html>";
 
         }
-        catch(ArithmeticException e){
+        catch(Exception e){
             return "Error";
         }
     }

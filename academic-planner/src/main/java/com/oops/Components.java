@@ -34,7 +34,11 @@ public class Components {
         ResultSet rs = new SQL().selectData("select * from components where courseid="+courseId);
         try{
             while (rs.next()){
-                al.add(new Component(rs.getInt("id"), rs.getString("name"), DateAlternate.date(rs.getString("date")), rs.getDouble("percentage"), rs.getDouble("marks")));
+                Double dub = rs.getDouble("marks");
+                if (rs.wasNull()){
+                    dub = null;
+                }
+                al.add(new Component(rs.getInt("id"), rs.getString("name"), DateAlternate.date(rs.getString("date")), rs.getDouble("percentage"), dub));
             }
         }
         catch (SQLException e){}
