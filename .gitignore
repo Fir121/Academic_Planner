@@ -2,3 +2,4 @@ academic-planner/target/*
 .vscode/*
 *.locked
 *.db*
+*.txt

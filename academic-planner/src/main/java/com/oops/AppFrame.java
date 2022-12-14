@@ -10,6 +10,9 @@ import jiconfont.swing.IconFontSwing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.Date;
 
 public class AppFrame{
@@ -17,6 +20,9 @@ public class AppFrame{
     static{
 		try { 
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			for (String type: new String[]{"Label","Button","RadioButton","Panel","OptionPane","ComboBox","TextArea","Spinner","TextField"}){
+				UIManager.put(type+".font", new Font("SANS_SERIF", Font.PLAIN, 15));
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -32,7 +38,7 @@ public class AppFrame{
         mainFrame.setVisible(true);
     }
 	public static void setIcon(JButton but, IconCode ff, Boolean single){
-		but.setIcon(IconFontSwing.buildIcon(ff, 18));
+		but.setIcon(IconFontSwing.buildIcon(ff, 20));
 		if (single){
 			but.setBorderPainted(false); 
 			but.setContentAreaFilled(false); 
@@ -307,6 +313,17 @@ class HomePanel extends AppFrame{
 			}
 		});
         panel2.add(button2);
+
+		JPanel panel3 = new JPanel();
+		verticalBox.add(panel3);
+        JButton button3 = new JButton("Settings");
+		setIcon(button3, FontAwesome.ASTERISK, false);
+		button3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new SettingsPanel();
+			}
+		});
+        panel3.add(button3);
 
         refresh();
     }
@@ -896,6 +913,124 @@ class MarkAttendancePanel extends AppFrame{
 		gbc_pos.gridx = 1;
 		gbc_pos.gridy = 1;
 		markAttendancePanel.add(new CalendarDatesPanel(mainFrame,true,courseid,cur_year,cur_month), gbc_pos);
+
+		refresh();
+	}
+}
+
+class SettingsPanel extends AppFrame{
+	JPanel settingsPanel;
+
+	public SettingsPanel(){
+		settingsPanel = new JPanel();
+		mainFrame.setContentPane(settingsPanel);
+
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[]{0,1,0};
+		gbl_contentPane.rowHeights = new int[]{0,5,0};
+		gbl_contentPane.columnWeights = new double[]{0.5, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.5, 1.0, 1.0, Double.MIN_VALUE};
+		settingsPanel.setLayout(gbl_contentPane);
+
+		JPanel pane = new JPanel();
+		GridBagConstraints gbc_pane = new GridBagConstraints();
+		gbc_pane.anchor = GridBagConstraints.WEST;
+		gbc_pane.insets = new Insets(0, 0, 5, 5);
+		gbc_pane.fill = GridBagConstraints.VERTICAL;
+		gbc_pane.gridx = 0;
+		gbc_pane.gridy = 0;
+		settingsPanel.add(pane, gbc_pane);
+		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JButton btnNewButton1 = new JButton("Back");
+		setIcon(btnNewButton1, FontAwesome.ANGLE_DOUBLE_LEFT, false);
+		btnNewButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new HomePanel();
+		}});
+		pane.add(btnNewButton1);
+
+
+		Box mainSettings = Box.createVerticalBox();
+		GridBagConstraints gbc_pos = new GridBagConstraints();
+		gbc_pos.fill = GridBagConstraints.HORIZONTAL;
+		gbc_pos.gridx = 1;
+		gbc_pos.gridy = 1;
+		settingsPanel.add(mainSettings, gbc_pos);
+
+		JPanel h1 = new JPanel();
+		JLabel lbl = new JLabel("Start Of Semester: ");
+		final JDateChooser startDate = new JDateChooser();
+		startDate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e){
+				if ("date".equals(e.getPropertyName())) {
+					if (!Constants.setStartDate((Date) e.getNewValue())){
+						startDate.setDate(Constants.START);
+						PopupFrame.showErrorMessage("Something went wrong");
+					}
+				}
+			}
+		});
+		startDate.setDate(Constants.START);
+		h1.add(lbl);
+		h1.add(startDate);
+		mainSettings.add(h1);
+
+		JPanel h2 = new JPanel();
+		JLabel lbl1 = new JLabel("End Of Semester: ");
+		final JDateChooser endDate = new JDateChooser();
+		endDate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e){
+				if ("date".equals(e.getPropertyName())) {
+					if (!Constants.setEndDate((Date) e.getNewValue())){
+						endDate.setDate(Constants.END);
+						PopupFrame.showErrorMessage("Something went wrong");
+					}
+				}
+			}
+		});
+		endDate.setDate(Constants.END);
+		h2.add(lbl1);
+		h2.add(endDate);
+		mainSettings.add(h2);
+
+		Box hb = Box.createHorizontalBox();
+		JButton logout = new JButton("Log Out");
+		logout.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				File myObj = new File("database.db"); 
+				File myObj2 = new File("credentials.locked");
+				File myObj3 = new File("email.locked");
+				File myObj4 = new File("startdate.txt");
+				File myObj5 = new File("enddate.txt");
+				if ((!myObj.exists() || myObj.delete()) && (!myObj2.exists() || myObj2.delete()) && (!myObj3.exists() || myObj3.delete()) && (!myObj4.exists() || myObj4.delete()) && (!myObj5.exists() || myObj5.delete())) { 
+					mainFrame.dispose();
+				} 
+				else {
+					PopupFrame.showErrorMessage("Couldn't delete file(s)");
+				} 
+			}
+		});
+
+		logout.setToolTipText("This will also reset all data, to only reset email/password delete the .locked files");
+		JButton clear = new JButton("Reset All");
+		clear.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				File myObj = new File("database.db"); 
+				if (myObj.delete()) { 
+					mainFrame.dispose();
+				} 
+				else {
+					PopupFrame.showErrorMessage("Couldn't delete db");
+				} 
+			}
+		});
+
+		hb.add(logout);
+		hb.add(clear);
+
+		mainSettings.add(new JLabel(" "));
+		mainSettings.add(hb);
 
 		refresh();
 	}

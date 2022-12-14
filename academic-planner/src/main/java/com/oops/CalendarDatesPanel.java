@@ -2,7 +2,6 @@ package com.oops;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.text.AttributeSet.FontAttribute;
 
 import com.toedter.calendar.JDateChooser;
 
