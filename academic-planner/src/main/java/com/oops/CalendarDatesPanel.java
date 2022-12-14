@@ -2,7 +2,12 @@ package com.oops;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.text.AttributeSet.FontAttribute;
+
 import com.toedter.calendar.JDateChooser;
+
+import jiconfont.icons.font_awesome.FontAwesome;
+
 import java.awt.*;
 import java.util.*;
 import java.time.*;
@@ -120,7 +125,8 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                 
                 int statusClass = 0;
                 if (!((DateAlternate.date(cur_year+"/"+cur_month+"/"+day).after(Constants.START) || DateAlternate.date(cur_year+"/"+cur_month+"/"+day).equals(Constants.START)) && (DateAlternate.date(cur_year+"/"+cur_month+"/"+day).before(Constants.END) || DateAlternate.date(cur_year+"/"+cur_month+"/"+day).equals(Constants.END)))){
-                    // DO NOTHING SINCE NOT WITHIN SEM RANGE
+                    panel.setBackground(Color.GRAY);
+                    panel.setToolTipText("This day is not within the semester range");
                 }
                 else if(attendance){
                     SpecialClass sc = Attendances.getSpecial(courseid, DateAlternate.date(cur_year+"/"+cur_month+"/"+day));
@@ -176,7 +182,6 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                     verticalBox.add(toggle);
                 }
                 else{
-                    System.out.println(cur_year+"/"+cur_month+"/"+day);
                     if (events.containsDate(cur_year+"/"+cur_month+"/"+day)){
                         for (Event ex: events.getEventsOnDate(cur_year+"/"+cur_month+"/"+day)){
                             if (ex.category.equals("Component")){
@@ -186,6 +191,11 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                             }
                             else{
                                 JButton event_x = new JButton();
+                                switch (ex.category){
+                                    case "Holiday":event_x.setBackground(Color.MAGENTA);event_x.setForeground(Color.MAGENTA);break;
+                                    case "Event":event_x.setBackground(Color.BLUE);event_x.setForeground(Color.BLUE);break;
+                                }
+                                event_x.setToolTipText("Click to delete/edit event");
                                 event_x.setText(ex.eventName);
                                 event_x.putClientProperty("eventid", ex.id);
                                 event_x.addActionListener(new ActionListener() {
@@ -208,7 +218,10 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
                                         deleteButton.addActionListener(new ActionListener() {
                                             public void actionPerformed(ActionEvent e) {
                                                 if (CalendarEvents.deleteEvent((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
-                                                    JOptionPane.getRootFrame().dispose();
+                                                    Window win = SwingUtilities.getWindowAncestor((JButton)e.getSource());
+                                                    if (win != null) {
+                                                        win.dispose();
+                                                    }
                                                     new CalendarPanel(cyear, cmonth);
                                                 }
                                             }
@@ -256,6 +269,7 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
             JButton but = new JButton();
             but.setText("Add Event");
+            AppFrame.setIcon(but, FontAwesome.PLUS, false);
             but.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     JTextField eventName = new JTextField();
@@ -293,7 +307,8 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
         repaint();
     }
     private void addCalendarHeader(){
-        JButton btnNewButton = new JButton("Prev");
+        JButton btnNewButton = new JButton();
+        AppFrame.setIcon(btnNewButton, FontAwesome.ARROW_CIRCLE_LEFT);
         btnNewButton.putClientProperty( "difference", -1);
         btnNewButton.addActionListener(this);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
@@ -302,7 +317,8 @@ public class CalendarDatesPanel extends JPanel implements ActionListener{
 		gbc_btnNewButton.gridy = 0;
 		add(btnNewButton, gbc_btnNewButton);
 		
-		JButton button = new JButton("Next");
+		JButton button = new JButton();
+        AppFrame.setIcon(button, FontAwesome.ARROW_CIRCLE_RIGHT);
         button.putClientProperty( "difference", 1);
         button.addActionListener(this);
 		GridBagConstraints gbc_button = new GridBagConstraints();

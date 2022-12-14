@@ -1,6 +1,5 @@
 package com.oops;
-// TODO ICON DESIGNS, colour code categories
-// TODO colour based geatures front end
+// TODO settings?
 class App{
     public static void main(String args[]){
         if (Registration.userHasRegistered()){

@@ -5,7 +5,6 @@ import java.security.MessageDigest;
 
 public class Registration {
     public static boolean register(String email, String password){
-        // TODO EMAIL CHECK
         if (email.equals("") || password.equals("")){
             return false;
         }

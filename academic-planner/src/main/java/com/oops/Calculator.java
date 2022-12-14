@@ -69,7 +69,6 @@ public class Calculator {
         Double totalMarks = 0.0;
         for (Component c: components.components){
             if (c.componentDate.compareTo(new Date()) <= 0){
-                System.out.println(c.componentName+" "+c.componentMarks);
                 if (c.componentMarks == null){
                     return "<html>Please fill in all possible marks<br/>before we can estimate a grade!</html>";
                 }
@@ -94,8 +93,6 @@ public class Calculator {
         Double extrapolatedClassMarks = (avg/totalMarks)*100;
         Double yourExtrapolatedMarks = (((gotMarks/attPercentageComponent)*attPercentage)/totalMarks)*100;
 
-        System.out.println(extrapolatedClassMarks);
-        System.out.println(yourExtrapolatedMarks);
         return calculateRange(extrapolatedClassMarks, yourExtrapolatedMarks);
     }
 

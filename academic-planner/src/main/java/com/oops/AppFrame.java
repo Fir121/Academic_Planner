@@ -4,6 +4,10 @@ import javax.swing.*;
 
 import com.toedter.calendar.JDateChooser;
 
+import jiconfont.IconCode;
+import jiconfont.icons.font_awesome.FontAwesome;
+import jiconfont.swing.IconFontSwing;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Date;
@@ -11,13 +15,34 @@ import java.util.Date;
 public class AppFrame{
     static JFrame mainFrame;
     static{
+		try { 
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		IconFontSwing.register(FontAwesome.getIconFont());
+		
         mainFrame = new JFrame("Academic Planner");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setBounds(100, 100, 1000, 750);
+
     }
     public void refresh(){
         mainFrame.setVisible(true);
     }
+	public static void setIcon(JButton but, IconCode ff, Boolean single){
+		but.setIcon(IconFontSwing.buildIcon(ff, 18));
+		if (single){
+			but.setBorderPainted(false); 
+			but.setContentAreaFilled(false); 
+			but.setFocusPainted(false); 
+			but.setOpaque(false);
+		}
+	}
+	public static void setIcon(JButton but, IconCode ff){
+		setIcon(but, ff, true);
+	}
 }
 
 abstract class LogoPanel extends AppFrame{
@@ -40,13 +65,11 @@ abstract class LogoPanel extends AppFrame{
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 0;
 		logoPanel.add(lblNewLabel, gbc_lblNewLabel);
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 25));
     }
 }
 class RegisterPanel extends LogoPanel{
     public RegisterPanel(){
         JButton button = new JButton("Register Now");
-		button.setFont(new Font("Tahoma", Font.PLAIN, 15));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new RegisterFormPanel();
@@ -62,7 +85,6 @@ class RegisterPanel extends LogoPanel{
 class LoginPanel extends LogoPanel{
     public LoginPanel(){
         JButton button = new JButton("Login");
-		button.setFont(new Font("Tahoma", Font.PLAIN, 15));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new LoginFormPanel();
@@ -91,6 +113,7 @@ class LoginFormPanel extends AppFrame implements ActionListener{
 		loginFormPanel.setLayout(gbl_contentPane);
 		
         JButton backButton = new JButton("Back");
+		setIcon(backButton, FontAwesome.ANGLE_DOUBLE_LEFT, false);
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
 		gbc_btnNewButton_1.anchor = GridBagConstraints.WEST;
 		gbc_btnNewButton_1.insets = new Insets(0, 20, 5, 5);
@@ -159,6 +182,7 @@ class RegisterFormPanel extends AppFrame implements ActionListener{
 		registerFormPanel.setLayout(gbl_contentPane);
 		
         JButton backButton = new JButton("Back");
+		setIcon(backButton, FontAwesome.ANGLE_DOUBLE_LEFT, false);
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
 		gbc_btnNewButton_1.anchor = GridBagConstraints.WEST;
 		gbc_btnNewButton_1.insets = new Insets(0, 20, 5, 5);
@@ -254,7 +278,7 @@ class HomePanel extends AppFrame{
 		JPanel panel = new JPanel();
 		verticalBox.add(panel);
         JButton button = new JButton("Courses");
-		button.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		setIcon(button, FontAwesome.LEANPUB, false);
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new CoursePanel();
@@ -265,18 +289,18 @@ class HomePanel extends AppFrame{
 		JPanel panel1 = new JPanel();
 		verticalBox.add(panel1);
         JButton button1 = new JButton("Calendar");
+		setIcon(button1, FontAwesome.CALENDAR, false);
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new CalendarPanel();
 			}
 		});
-		button1.setFont(new Font("Tahoma", Font.PLAIN, 15));
         panel1.add(button1);
 
 		JPanel panel2 = new JPanel();
 		verticalBox.add(panel2);
         JButton button2 = new JButton("Attendance");
-		button2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		setIcon(button2, FontAwesome.LINE_CHART, false);
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new AttendancePanel();
@@ -316,6 +340,7 @@ class CoursePanel extends AppFrame{
 		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JButton btnNewButton1 = new JButton("Back");
+		setIcon(btnNewButton1, FontAwesome.ANGLE_DOUBLE_LEFT, false);
 		btnNewButton1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new HomePanel();
@@ -336,7 +361,20 @@ class CoursePanel extends AppFrame{
 			JLabel lblNewLabel = new JLabel(course.toString());
 			panel.add(lblNewLabel);
 
-			JButton btnNewButton_1 = new JButton("Set Weekly");
+			JButton btnNewButton_2 = new JButton();
+			setIcon(btnNewButton_2, FontAwesome.LIST);
+			btnNewButton_2.setToolTipText("Set Course Components");
+			btnNewButton_2.putClientProperty( "id", course.id);
+			btnNewButton_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					new CourseComponentPanel((Integer)((JButton)e.getSource()).getClientProperty( "id" ));
+				}
+			});
+			panel.add(btnNewButton_2);
+
+			JButton btnNewButton_1 = new JButton();
+			setIcon(btnNewButton_1, FontAwesome.CALENDAR_O);
+			btnNewButton1.setToolTipText("Set Weekly TimeTable");
 			btnNewButton_1.putClientProperty( "id", course.id);
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -365,27 +403,9 @@ class CoursePanel extends AppFrame{
 			});
 			panel.add(btnNewButton_1);
 
-			JButton btnNewButton_2 = new JButton("Set Components");
-			btnNewButton_2.putClientProperty( "id", course.id);
-			btnNewButton_2.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					new CourseComponentPanel((Integer)((JButton)e.getSource()).getClientProperty( "id" ));
-				}
-			});
-			panel.add(btnNewButton_2);
-
-			JButton btnNewButton_3 = new JButton("Remove");
-			btnNewButton_3.putClientProperty( "id", course.id);
-			btnNewButton_3.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (Courses.removeCourse((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
-						new CoursePanel();
-					}
-				}
-			});
-			panel.add(btnNewButton_3);
-
-			JButton btnNewButton_4 = new JButton("Edit");
+			JButton btnNewButton_4 = new JButton();
+			setIcon(btnNewButton_4, FontAwesome.PENCIL);
+			btnNewButton_4.setToolTipText("Edit Course Details");
 			btnNewButton_4.putClientProperty( "id", course.id);
 			btnNewButton_4.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -412,11 +432,23 @@ class CoursePanel extends AppFrame{
 				}
 			});
 			panel.add(btnNewButton_4);
+
+			JButton btnNewButton_3 = new JButton();
+			setIcon(btnNewButton_3, FontAwesome.TRASH);
+			btnNewButton_3.setToolTipText("Delete Course");
+			btnNewButton_3.putClientProperty( "id", course.id);
+			btnNewButton_3.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (Courses.removeCourse((Integer)((JButton)e.getSource()).getClientProperty( "id" ))){
+						new CoursePanel();
+					}
+				}
+			});
+			panel.add(btnNewButton_3);
 		}
 
-		
-
 		JButton addCourse = new JButton("Add Course");
+		setIcon(addCourse, FontAwesome.PLUS, false);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = 1;
 		gbc_btnNewButton.gridy = 2;
@@ -473,6 +505,7 @@ class CourseComponentPanel extends AppFrame{
 		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JButton btnNewButton1 = new JButton("Back");
+		setIcon(btnNewButton1, FontAwesome.ANGLE_DOUBLE_LEFT, false);
 		btnNewButton1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new CoursePanel();
@@ -508,6 +541,7 @@ class CourseComponentPanel extends AppFrame{
 		verticalBox_1.add(predres);
 
 		upperPanel.add(verticalBox_0);
+		upperPanel.add(new JSeparator(SwingConstants.VERTICAL));
 		upperPanel.add(verticalBox_1);
 
 		Box verticalBox = Box.createVerticalBox();
@@ -524,18 +558,9 @@ class CourseComponentPanel extends AppFrame{
 			JLabel lblNewLabel = new JLabel(component.componentName+" : "+component.componentPercentage+"%");
 			panel.add(lblNewLabel);
 
-			JButton btnNewButton_3 = new JButton("Remove");
-			btnNewButton_3.putClientProperty( "componentid", component.id);
-			btnNewButton_3.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (Components.removeComponent((Integer)((JButton)e.getSource()).getClientProperty( "componentid" ))){
-						new CourseComponentPanel(components.courseId);
-					}
-				}
-			});
-			panel.add(btnNewButton_3);
-
-			JButton btnNewButton_4 = new JButton("Edit");
+			JButton btnNewButton_4 = new JButton();
+			setIcon(btnNewButton_4, FontAwesome.PENCIL);
+			btnNewButton_4.setToolTipText("Edit Component Details");
 			btnNewButton_4.putClientProperty( "componentid", component.id);
 			btnNewButton_4.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -576,8 +601,21 @@ class CourseComponentPanel extends AppFrame{
 			});
 			panel.add(btnNewButton_4);
 
+			JButton btnNewButton_3 = new JButton();
+			setIcon(btnNewButton_3, FontAwesome.TRASH);
+			btnNewButton_3.setToolTipText("Delete Component");
+			btnNewButton_3.putClientProperty( "componentid", component.id);
+			btnNewButton_3.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (Components.removeComponent((Integer)((JButton)e.getSource()).getClientProperty( "componentid" ))){
+						new CourseComponentPanel(components.courseId);
+					}
+				}
+			});
+			panel.add(btnNewButton_3);
+
 			if(component.componentDate.compareTo(new Date()) <= 0){
-				JButton btnNewButton_5 = new JButton("Record Marks");
+				JButton btnNewButton_5 = new JButton("Marks");
 				btnNewButton_5.putClientProperty( "componentid", component.id);
 				btnNewButton_5.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent e){
@@ -613,6 +651,8 @@ class CourseComponentPanel extends AppFrame{
 		
 		JPanel lowerPanel = new JPanel();
 		JButton calcGrade = new JButton("Grade Calculator");
+		setIcon(calcGrade, FontAwesome.CALCULATOR, false);
+		calcGrade.setToolTipText("Use This Calculator to get a rough estimate of your grade, if you only know your class mark details.");
 		calcGrade.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				final JTextField average = new JTextField();
@@ -643,6 +683,7 @@ class CourseComponentPanel extends AppFrame{
 		});
 		lowerPanel.add(calcGrade);
 		JButton addComponent = new JButton("Add Component");
+		setIcon(addComponent, FontAwesome.PLUS, false);
 		lowerPanel.add(addComponent);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = 1;
@@ -704,6 +745,7 @@ class CalendarPanel extends AppFrame{
 		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JButton btnNewButton1 = new JButton("Back");
+		setIcon(btnNewButton1, FontAwesome.ANGLE_DOUBLE_LEFT, false);
 		btnNewButton1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new HomePanel();
@@ -749,6 +791,7 @@ class AttendancePanel extends AppFrame{
 		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JButton btnNewButton1 = new JButton("Back");
+		setIcon(btnNewButton1, FontAwesome.ANGLE_DOUBLE_LEFT, false);
 		btnNewButton1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new HomePanel();
@@ -771,6 +814,8 @@ class AttendancePanel extends AppFrame{
 
 			if (!attendance.hasWeekly){
 				JButton btnNewButton_1 = new JButton("Set Weekly");
+				setIcon(btnNewButton_1, FontAwesome.CALENDAR_O, false);
+				btnNewButton_1.setToolTipText("You need to set a weekly schedule before you can mark attendance");
 				btnNewButton_1.putClientProperty( "id", attendance.courseid);
 				btnNewButton_1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -795,6 +840,8 @@ class AttendancePanel extends AppFrame{
 			}
 			else{
 				JButton btnNewButton_2 = new JButton("Mark Absences");
+				setIcon(btnNewButton_2, FontAwesome.CHECK_CIRCLE, false);
+				btnNewButton_2.setToolTipText("Completed classes are marked as present by default");
 				btnNewButton_2.putClientProperty( "id", attendance.courseid);
 				btnNewButton_2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -837,6 +884,7 @@ class MarkAttendancePanel extends AppFrame{
 		pane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JButton btnNewButton1 = new JButton("Back");
+		setIcon(btnNewButton1, FontAwesome.ANGLE_DOUBLE_LEFT, false);
 		btnNewButton1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new AttendancePanel();
