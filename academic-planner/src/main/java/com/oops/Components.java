@@ -28,6 +28,7 @@ public class Components {
     public Components(int courseId){
         this.courseId = courseId;
         components = getComponents(courseId);
+        Collections.sort(components);
     }
     private ArrayList<Component> getComponents(int courseId){
         ArrayList<Component> al = new ArrayList<>();

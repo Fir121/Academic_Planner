@@ -37,21 +37,21 @@ public class Calculator {
             return "E-";
         }
         else{
-            return "F";
+            return "Could Not Determine";
         }
     }
     private static Double getAverage(String grade, Double marks){
         switch(grade){
-            case "A": return marks/1.8;
-            case "A-": return marks/1.5;
-            case "B": return marks/1.25;
-            case "B-": return marks;
-            case "C": return marks/0.8;
-            case "C-": return marks/0.7;
-            case "D": return marks/0.6;
-            case "D-": return marks/0.5;
-            case "E": return marks/0.4;
-            case "E-": return marks/0.3;
+            case "A": return (marks)/1.8;
+            case "A-": return (marks)/1.5;
+            case "B": return (marks)/1.25;
+            case "B-": return (marks);
+            case "C": return (marks)/0.8;
+            case "C-": return (marks)/0.7;
+            case "D": return (marks)/0.6;
+            case "D-": return (marks)/0.5;
+            case "E": return (marks)/0.4;
+            case "E-": return (marks)/0.3;
             default: return 0.0;
         }
     }

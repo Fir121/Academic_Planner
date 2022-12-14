@@ -31,7 +31,7 @@ public class AppFrame{
 		
         mainFrame = new JFrame("Academic Planner");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setBounds(100, 100, 1000, 750);
+        mainFrame.setBounds(100, 100, 1200, 800);
 
     }
     public void refresh(){
@@ -391,7 +391,7 @@ class CoursePanel extends AppFrame{
 
 			JButton btnNewButton_1 = new JButton();
 			setIcon(btnNewButton_1, FontAwesome.CALENDAR_O);
-			btnNewButton1.setToolTipText("Set Weekly TimeTable");
+			btnNewButton_1.setToolTipText("Set Weekly TimeTable");
 			btnNewButton_1.putClientProperty( "id", course.id);
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -995,7 +995,8 @@ class SettingsPanel extends AppFrame{
 		mainSettings.add(h2);
 
 		Box hb = Box.createHorizontalBox();
-		JButton logout = new JButton("Log Out");
+		JButton logout = new JButton("Reset App");
+		logout.setToolTipText("Clears all saved app data");
 		logout.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				File myObj = new File("database.db"); 
@@ -1011,17 +1012,18 @@ class SettingsPanel extends AppFrame{
 				} 
 			}
 		});
-
-		logout.setToolTipText("This will also reset all data, to only reset email/password delete the .locked files");
-		JButton clear = new JButton("Reset All");
+		
+		JButton clear = new JButton("New Semester");
 		clear.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				File myObj = new File("database.db"); 
-				if (myObj.delete()) { 
+				File myObj2 = new File("startdate.txt");
+				File myObj3 = new File("enddate.txt");
+				if ((!myObj.exists() || myObj.delete()) && (!myObj2.exists() || myObj2.delete()) && (!myObj3.exists() || myObj3.delete())) { 
 					mainFrame.dispose();
 				} 
 				else {
-					PopupFrame.showErrorMessage("Couldn't delete db");
+					PopupFrame.showErrorMessage("Couldn't delete file(s)");
 				} 
 			}
 		});
