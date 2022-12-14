@@ -172,7 +172,8 @@ public class Calculator {
             "<br/>Total Classes: "+totalClasses+
             "<br/>Remaining Classes: "+(totalClasses-totalClassesToDate)+
             "<br/><br/>Current Attendance: "+String.format("%.2f", (attendedClasses/totalClassesToDate)*100)+"%"+
-            "<br/>End Of Sem Attendance: "+String.format("%.2f", (attendedClasses/totalClasses)*100)+"%</html>";
+            "<br/>End Of Sem Attendance: "+String.format("%.2f", (attendedClasses/totalClasses)*100)+"%"+
+            "<br/><br/>Max Possible Attendance: "+String.format("%.2f", ((attendedClasses+(totalClasses-totalClassesToDate))/totalClasses)*100)+"%</html>";
 
         }
         catch(Exception e){
