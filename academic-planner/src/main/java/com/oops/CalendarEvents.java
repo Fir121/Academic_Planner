@@ -51,7 +51,7 @@ public class CalendarEvents {
         finally{
             SQL.closeConn();
         }
-        rs = new SQL().selectData("select courses.code || '<br/>' || components.name as 'name', components.date as 'date' from components join courses;");
+        rs = new SQL().selectData("select courses.code || '<br/>' || components.name as 'name', components.date as 'date' from components join courses on Components.courseid = Courses.id;");
         try{
             while (rs.next()){
                 al.add(new Event(null, "<html>"+rs.getString("name")+"</html>", "Component", DateAlternate.date(rs.getString("date")), null));
