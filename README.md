@@ -1,5 +1,7 @@
 # Academic Planner
 
+small change
+
 This Project uses Maven for build and file control. The project is in the academic-planner/ directory.
 
 ## Overview
